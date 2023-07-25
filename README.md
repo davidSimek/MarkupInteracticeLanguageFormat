@@ -3,7 +3,7 @@
 ##### by David Šimek and Petr Hruška
 ##### publishing under <ins>GNU GENENRAL PUBLIC LICENSE V3.0</ins> (more in LICENSE file)
 
-## currently working on:
+### currently working on:
 transpiler to html
 
 ### idea:
