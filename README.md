@@ -3,11 +3,11 @@
 ##### by David Šimek and Petr Hruška
 ##### publishing under <ins>GNU GENENRAL PUBLIC LICENSE V3.0</ins> (more in LICENSE file)
 -----
-#### technology used:
+### technology used:
 - haskell
 - html
 -----
-#### motivation:
+### motivation:
 This project has 2 main goals.
 - make us get maturita without passing maturita exam
 - provide easy and free workflow for making:
