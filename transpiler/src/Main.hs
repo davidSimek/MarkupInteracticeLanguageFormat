@@ -18,6 +18,4 @@ main = do
         _ -> putStrLn "You have to provide filename as an argument:\n    transpile <path>"
 processFile :: String -> String
 processFile [] = "<h1>It seems like your file is emp_ty</h1>"
-processFile content = do
-    tokens :: [Div]
-    let tokens = tokenize content
+processFile content = concat $ map toTag $ tokenize content

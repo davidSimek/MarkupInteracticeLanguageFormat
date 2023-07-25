@@ -1,4 +1,4 @@
-module TokenizerModule (tokenize) where
+module TokenizerModule (tokenize, Div, toTag) where
 
 data Div = Div 
     { content :: String
