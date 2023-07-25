@@ -1,0 +1,1 @@
+./out/transpiler $1
