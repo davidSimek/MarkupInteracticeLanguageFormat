@@ -13,12 +13,14 @@ data Div = Div
     , fb :: Int  ---------------
 
     , margin :: Int
+    , marginUnit :: String
     , padding :: Int
+    , paddingUnit :: String
     }
 
 
 toTag :: Div -> String
-toTag div = "<div style=\"background-color:rgb(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ "), color:rgb(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ")\">" ++ content div ++ "</div>\n"
+toTag div = "<div style=\"background-color:rgb(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ "), color:rgb(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ "), margin:" ++ show (margin div) ++ marginUnit div ++ ", padding:" ++ show (padding div) ++ paddingUnit div ++ "\">" ++ content div ++ "</div>\n"
 
 errorDiv :: Div
 errorDiv = Div 
@@ -34,7 +36,9 @@ errorDiv = Div
     , fb =   0  ---------------
 
     , margin = 10
+    , marginUnit = "px"
     , padding = 10
+    , paddingUnit = "px"
     }
 
 
