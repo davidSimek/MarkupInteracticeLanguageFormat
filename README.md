@@ -1,11 +1,12 @@
 # Markup Interactive Language Format
-## maturita thesis and personal project
+#####  maturita thesis and personal project
 ##### by David Šimek and Petr Hruška
 ##### publishing under <ins>GNU GENENRAL PUBLIC LICENSE V3.0</ins> (more in LICENSE file)
 -----
-### technology used:
-- haskell
-- html
+### idea:
+- simple markup language usable by non developers
+- free transpiler and other tools
+- easy to use UI (in future)
 -----
 ### motivation:
 This project has 2 main goals.
@@ -15,3 +16,7 @@ This project has 2 main goals.
     - basic webs
     - teaching/learning materials
     - notes keeping
+-----
+### technology used:
+- haskell
+- html
