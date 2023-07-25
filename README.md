@@ -11,7 +11,7 @@
 This project has 2 main goals.
 - make us get maturita without passing maturita exam
 - provide easy and free workflow for making:
-    - <ins>presentations</ins>
-    - <ins>basic webs</ins>
-    - <ins>teaching/learning materials</ins>
-    - <ins>notes keeping</ins>
+    - presentations
+    - basic webs
+    - teaching/learning materials
+    - notes keeping
