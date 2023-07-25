@@ -18,7 +18,7 @@ data Div = Div
 
 
 toTag :: Div -> String
-toTag div = "<div style=\"background-color:rgb(" ++ show (br div) ++ show (bg div) ++ show (bb div) ++ ") \"> " ++ content div ++ "</div>\n"
+toTag div = "<div style=\"background-color:rgb(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ "), color:rgb(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ")\">" ++ content div ++ "</div>\n"
 
 errorDiv :: Div
 errorDiv = Div 
