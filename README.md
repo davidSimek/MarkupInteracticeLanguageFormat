@@ -15,7 +15,7 @@ This project has 2 main goals.
     - presentations
     - basic webs
     - teaching/learning materials
-    - notes keeping
+    - good looking notes
 -----
 ### technology used:
 - haskell
