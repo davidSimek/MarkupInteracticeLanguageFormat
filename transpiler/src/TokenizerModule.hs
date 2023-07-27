@@ -81,32 +81,46 @@ parseLogic [] = [errorDiv]
 parseLogic lines = keepDivs (map parse lines)
 
 parse :: String -> Div
-parse [] = [defaultDiv]
-parse line =  produceDiv (separateContent line 0 [] False)
+parse [] = defaultDiv
+parse line = produceDiv (separateContent line)
     where
         -- " and # are considered illegal for now
         -- - commint -> ["comment", "", ""]
         -- "this is text" lalala lalala -> ["div", "this is text", "lalala"] 
         -- #colorText# font-size 20 font-color red -> ["style", "colorText", "font-size 20 font-color red"]
-        separateContent :: String -> Ini -> Bool -> [String]
-        separateContent [] _ _ _ = []
-        separateContent (char:rest) countOfQuotes carry isClass
-            | char == '-' && countOfQuotes == 0 = ["comment", "" , ""]
-            | countOfQuotes == 2 && isClass = ["class", carry ++ char, rest]
-            | countOfQuotes == 2 = ["div", carry ++ char, rest]
-            | char == '\"' = separateContent rest countOfQuotes + 1 carry False
-            | char == '\#' = separateContent rest countOfQuotes + 1 carry True 
-            | countOfQuotes < 1 == separateContent rest countofQuotes [] isClass
-            | otherwise = separateConntent countOfQuotes (char ++ carry) isClass
+        --
+        --
+        separateContent :: String -> [String]
+        separateContent line
+            | getType line == "div" = ["div"] ++ splitOnN line (findNth line '\"' 2 0 0) 0 ""
+            | getType line == "style" = ["style"] ++ [splitOnN line (findNth line '#' 2 0 0) 0 ""] 
+            | getType line == "comment" = ["comment", "", ""]
+
+        findNth :: String -> Char -> Int -> Int -> Int
+        findNth [] _ _ _ currentIndex = currentIndex
+        findNth (char:rest) finding n foundCount currentIndex
+            | char == finding && foundCount + 1 == n = currentIndex
+            | char == finding = findNth rest finding n (foundCount + 1) (currentIndex + 1)
+            | otherwise = findNth rest finding n foundCount (currentIndex + 1)
+
+        -- make this work on empty chars on start of line it future
+        getType :: String -> String
+        getType (char:rest)
+            | char == '"' = "div"
+            | char == '#' = "style"
+            | otherwise = "comment"
+
+        splitOnN :: String -> Int -> [String]
+        splitOnN line index = [take index line, drop index line]
 
 produceDiv :: [String] -> Div
-produceDiv (type:rest)
-    | type == "comment" = defaultDiv
-    | type == "class" = defaultDiv
-    | otherwise
+produceDiv (first:rest)
+    | first == "comment" = defaultDiv
+    | first == "class" = defaultDiv
+    | otherwise = defaultDiv
 
 keepDivs :: [Div] -> [Div]
 keepDivs [] = []
 keepDivs (div:rest)
     | isDefault div = keepDivs rest
-    | otherwise div = div : keepDivs rest 
+    | otherwise = div : keepDivs rest
