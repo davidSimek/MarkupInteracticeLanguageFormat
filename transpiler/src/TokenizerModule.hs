@@ -50,7 +50,7 @@ errorDiv = Div
 
 defaultDiv :: Div
 defaultDiv = Div 
-    { isDefault = True
+    { isDefault = False
     , content = ""
     , font = "0px Arial, sans-serif"
 
@@ -114,13 +114,25 @@ parse line = produceDiv (separateContent line)
             | otherwise = "comment"
 
         splitOnN :: String -> Int -> [String]
-        splitOnN line index = [take index line, drop index line]
+        splitOnN (first:line) index = [take (index - 1) line, drop index line]
 
 produceDiv :: [String] -> Div
 produceDiv (first:rest)
-    | first == "comment" = defaultDiv
+    | first == "div" = processDiv rest
     | first == "class" = defaultDiv
     | otherwise = defaultDiv
+        where
+            processDiv :: [String] -> Div
+            processDiv [] = defaultDiv
+            processDiv (parsedContent:style) = styleDiv parsedContent style
+
+            styleDiv :: String -> [String] -> Div
+            styleDiv _ [] = defaultDiv
+            styleDiv parsedContent (style:_) = defaultDiv { 
+                isDefault = False,
+                content = parsedContent
+            }
+
 
 keepDivs :: [Div] -> [Div]
 keepDivs [] = []
