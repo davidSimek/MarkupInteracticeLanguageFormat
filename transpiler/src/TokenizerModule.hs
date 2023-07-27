@@ -1,7 +1,8 @@
 module TokenizerModule (tokenize, Div, toTag) where
 
 data Div = Div 
-    { content :: String
+    { isDefault :: Bool
+    , content :: String
     , font :: String
 
     , br :: Int  ---------------
@@ -26,44 +27,46 @@ toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ s
 
 errorDiv :: Div
 errorDiv = Div 
-    { content = "hello"
-    , font = "normal"
+    { isDefault = False
+    , content = "hello"
+    , font = "13px Arial, sans-serif"
 
-    , br = 255  ---------------
+    , br =   0  ---------------
     , bg =   0  -- BG colors -- 
-    , bb = 255  ---------------
-    , ba = 1.0
+    , bb =   0  ---------------
+    , ba = 0.0
 
     , fr =   0  ---------------
     , fg =   0  -- FG colors --  
     , fb =   0  ---------------
     , fa =   1.0
 
-    , margin = 10
+    , margin = 0
     , marginUnit = "px"
-    , padding = 10
+    , padding = 20
     , paddingUnit = "px"
     }
 
 
 defaultDiv :: Div
 defaultDiv = Div 
-    { content = ""
-    , font = "13px Arial, sans-serif"
+    { isDefault = True
+    , content = ""
+    , font = "0px Arial, sans-serif"
 
-    , br = 255  ---------------
+    , br =   0 ---------------
     , bg =   0  -- BG colors -- 
-    , bb = 255  ---------------
-    , ba =   0
+    , bb =   0 ---------------
+    , ba = 0.0
 
     , fr =   0  ---------------
     , fg =   0  -- FG colors --  
     , fb =   0  ---------------
-    , fa =   1.0
+    , fa = 0.0
 
-    , margin = 10
+    , margin = 0
     , marginUnit = "px"
-    , padding = 10
+    , padding = 0
     , paddingUnit = "px"
     }
 
@@ -71,4 +74,39 @@ defaultDiv = Div
 
 tokenize :: String -> [Div]
 tokenize [] = [errorDiv] 
-tokenize div = [errorDiv]
+tokenize code = parseLogic (lines code)
+
+parseLogic :: [String] -> [Div]
+parseLogic [] = [errorDiv]
+parseLogic lines = keepDivs (map parse lines)
+
+parse :: String -> Div
+parse [] = [defaultDiv]
+parse line =  produceDiv (separateContent line 0 [] False)
+    where
+        -- " and # are considered illegal for now
+        -- - commint -> ["comment", "", ""]
+        -- "this is text" lalala lalala -> ["div", "this is text", "lalala"] 
+        -- #colorText# font-size 20 font-color red -> ["style", "colorText", "font-size 20 font-color red"]
+        separateContent :: String -> Ini -> Bool -> [String]
+        separateContent [] _ _ _ = []
+        separateContent (char:rest) countOfQuotes carry isClass
+            | char == '-' && countOfQuotes == 0 = ["comment", "" , ""]
+            | countOfQuotes == 2 && isClass = ["class", carry ++ char, rest]
+            | countOfQuotes == 2 = ["div", carry ++ char, rest]
+            | char == '\"' = separateContent rest countOfQuotes + 1 carry False
+            | char == '\#' = separateContent rest countOfQuotes + 1 carry True 
+            | countOfQuotes < 1 == separateContent rest countofQuotes [] isClass
+            | otherwise = separateConntent countOfQuotes (char ++ carry) isClass
+
+produceDiv :: [String] -> Div
+produceDiv (type:rest)
+    | type == "comment" = defaultDiv
+    | type == "class" = defaultDiv
+    | otherwise
+
+keepDivs :: [Div] -> [Div]
+keepDivs [] = []
+keepDivs (div:rest)
+    | isDefault div = keepDivs rest
+    | otherwise div = div : keepDivs rest 
