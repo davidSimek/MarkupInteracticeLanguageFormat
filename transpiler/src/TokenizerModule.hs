@@ -91,17 +91,19 @@ parse line = produceDiv (separateContent line)
         --
         --
         separateContent :: String -> [String]
+        separateContent [] = ["comment", "", ""]
         separateContent line
-            | getType line == "div" = ["div"] ++ splitOnN line (findNth line '\"' 2 0 0) 0
-            | getType line == "style" = ["style"] ++ splitOnN line (findNth line '#' 2 0 0) 0 
+            | getType line == "div" = ["div"] ++ splitOnN line (findSecondChar line '\"' 0 0)
+            | getType line == "style" = ["style"] ++ splitOnN line (findSecondChar line '#' 0 0) 
             | getType line == "comment" = ["comment", "", ""]
+            | otherwise = ["comment", "", ""]
 
-        findNth :: String -> Char -> Int -> Int -> Int
-        findNth [] _ _ _ currentIndex = currentIndex
-        findNth (char:rest) finding n foundCount currentIndex
-            | char == finding && foundCount + 1 == n = currentIndex
-            | char == finding = findNth rest finding n (foundCount + 1) (currentIndex + 1)
-            | otherwise = findNth rest finding n foundCount (currentIndex + 1)
+        findSecondChar :: String -> Char -> Int -> Int -> Int
+        findSecondChar [] _ _ currentIndex = currentIndex
+        findSecondChar (char:rest) finding foundCount currentIndex
+            | char == finding && foundCount + 1 == 2 = currentIndex
+            | char == finding = findSecondChar rest finding (foundCount + 1) (currentIndex + 1)
+            | otherwise = findSecondChar rest finding foundCount (currentIndex + 1)
 
 
         -- make this work on empty chars on start of line it future
