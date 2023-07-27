@@ -92,8 +92,8 @@ parse line = produceDiv (separateContent line)
         --
         separateContent :: String -> [String]
         separateContent line
-            | getType line == "div" = ["div"] ++ splitOnN line (findNth line '\"' 2 0 0) 0 ""
-            | getType line == "style" = ["style"] ++ [splitOnN line (findNth line '#' 2 0 0) 0 ""] 
+            | getType line == "div" = ["div"] ++ splitOnN line (findNth line '\"' 2 0 0) 0
+            | getType line == "style" = ["style"] ++ splitOnN line (findNth line '#' 2 0 0) 0 
             | getType line == "comment" = ["comment", "", ""]
 
         findNth :: String -> Char -> Int -> Int -> Int
@@ -102,6 +102,7 @@ parse line = produceDiv (separateContent line)
             | char == finding && foundCount + 1 == n = currentIndex
             | char == finding = findNth rest finding n (foundCount + 1) (currentIndex + 1)
             | otherwise = findNth rest finding n foundCount (currentIndex + 1)
+
 
         -- make this work on empty chars on start of line it future
         getType :: String -> String
