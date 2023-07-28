@@ -131,10 +131,12 @@ produceDiv (first:rest)
                 br = getColor style 'r' "bg",
                 bg = getColor style 'g' "bg",
                 bb = getColor style 'b' "bg",
+                ba = getAlpha style "bg",
 
                 fr = getColor style 'r' "color",
                 fg = getColor style 'g' "color",
-                fb = getColor style 'b' "color"
+                fb = getColor style 'b' "color",
+                fa = getAlpha style "color"
             }
 
             getColor :: String -> Char -> String -> Int 
@@ -160,6 +162,12 @@ produceDiv (first:rest)
             getColorRGB 'b' (_ : _ : b : _) = b
             getColorRGB _ _ = "0"
 
+            getAlpha :: String -> String -> Float
+            getAlpha input finding = case dropWhile (/= finding) (words input) of
+                (finding : r : g : b : a : _)
+                    | all isNumber [r, g, b, a] -> read a
+                (finding : color : _) -> colorMap color 'a'
+                _ -> 0.0
 
             getMargin :: String -> String
             getMargin input = case dropWhile (/= "margin") (words input) of
@@ -202,13 +210,13 @@ colorMap color 'b'
     | color == "transparent" = 0.0
     | otherwise = 255.0
 colorMap color 'a'
-    | color == "black" = 0.0
-    | color == "white" = 0.0
-    | color == "red" = 0.0
-    | color == "green" = 0.0
-    | color == "blue" = 0.0
+    | color == "black" = 1.0
+    | color == "white" = 1.0
+    | color == "red" = 1.0
+    | color == "green" = 1.0
+    | color == "blue" = 1.0
     | color == "transparent" = 0.0
-    | otherwise = 1.0
+    | otherwise = 0.0
 colorMap _ _ = 0.0
 
 keepDivs [] = []
