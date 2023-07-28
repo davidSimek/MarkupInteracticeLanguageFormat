@@ -15,20 +15,18 @@ data Div = Div
     , fb :: Int  ---------------
     , fa :: Float
 
-    , margin :: Int
-    , marginUnit :: String
-    , padding :: Int
-    , paddingUnit :: String
+    , margin :: String
+    , padding :: String
     }
 
 
 toTag :: Div -> String
-toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ " ," ++ show (fa div) ++ "); margin: " ++ show (margin div) ++ marginUnit div ++ "; padding: " ++ show (padding div) ++ paddingUnit div ++ ";\">" ++ content div ++ "</div>\n"
+toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ " ," ++ show (fa div) ++ "); margin: " ++ margin div ++ "; padding: " ++ padding div ++ ";\">" ++ content div ++ "</div>\n"
 
 errorDiv :: Div
 errorDiv = Div 
     { isDefault = False
-    , content = "hello"
+    , content = "this is error div"
     , font = "13px Arial, sans-serif"
 
     , br =   0  ---------------
@@ -41,10 +39,8 @@ errorDiv = Div
     , fb =   0  ---------------
     , fa =   1.0
 
-    , margin = 0
-    , marginUnit = "px"
-    , padding = 20
-    , paddingUnit = "px"
+    , margin = "0px"
+    , padding = "20px"
     }
 
 
@@ -64,10 +60,8 @@ defaultDiv = Div
     , fb =   0  ---------------
     , fa = 0.0
 
-    , margin = 0
-    , marginUnit = "px"
-    , padding = 0
-    , paddingUnit = "px"
+    , margin = "0px"
+    , padding = "0px"
     }
 
 
@@ -130,8 +124,20 @@ produceDiv (first:rest)
             styleDiv _ [] = defaultDiv
             styleDiv parsedContent (style:_) = defaultDiv { 
                 isDefault = False,
-                content = parsedContent
+                content = parsedContent,
+                padding = getPadding style,
+                margin = getMargin style
             }
+
+            getPadding :: String -> String
+            getPadding input = case dropWhile (/= "padding") (words input) of
+                ("padding" : paddingValue : _) -> paddingValue
+                _ -> "0px"
+
+            getMargin :: String -> String
+            getMargin input = case dropWhile (/= "margin") (words input) of
+                ("margin" : marginValue : _) -> marginValue
+                _ -> "0px"
 
 
 keepDivs :: [Div] -> [Div]

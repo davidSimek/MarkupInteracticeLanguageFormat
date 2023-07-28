@@ -1,5 +1,6 @@
-hello, this is my file
-it has multiple lines
-lol
-lol
-lol
+"hello, this is my file" margin 25px
+"it has multiple lines" padding 15px
+-- comment
+"lol" 
+"lol"
+"lol"
