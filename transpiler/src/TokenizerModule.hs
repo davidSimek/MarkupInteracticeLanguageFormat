@@ -1,5 +1,7 @@
 module TokenizerModule (tokenize, Div, toTag) where
 
+import Text.Read (readMaybe)
+
 data Div = Div 
     { isDefault :: Bool
     , content :: String
@@ -104,6 +106,11 @@ parse line = produceDiv (separateContent line)
         splitOnN :: String -> Int -> [String]
         splitOnN (first:line) index = [take (index - 1) line, drop index line]
 
+isNumber :: String -> Bool
+isNumber str = case readMaybe str :: Maybe Double of
+  Just _ -> True
+  Nothing -> False
+
 produceDiv :: [String] -> Div
 produceDiv (first:rest)
     | first == "div" = processDiv rest
@@ -121,7 +128,31 @@ produceDiv (first:rest)
                 content = parsedContent,
                 padding = getPadding style,
                 margin = getMargin style
+                br = getColor style 'r' "bg"
+                bg = getColor style 'g' "bg"
+                bb = getColor style 'b' "bg"
             }
+
+            --          style     channel finding
+            getColor :: String :: Char :: String -> Float 
+            getColor _ _ _ channel
+                | channel != 'r' && channel != 'g' && channel != 'b' && channel != 'a' = return 0.0
+            getColor input channel finding = case dropWhile (/= finding) (words input) of
+                -- check for r g b a
+                (finding : red : green : blue : alpha) 
+                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'r' -> read red
+                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'g' -> read green
+                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'b' -> read blue
+                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'a' -> read alpha
+                -- check for f g b
+                (finding : red : green : blue) 
+                    | isNumber red && isNumber green && isNumber blue && channel == 'r' -> read red
+                    | isNumber red && isNumber green && isNumber blue && channel == 'g' -> read green
+                    | isNumber red && isNumber green && isNumber blue && channel == 'b' -> read blue
+                -- check for color like "black" or "red"
+                (finding : color : _) -> colorMap color channel
+                    | isNumber color = colorMap color
+            getColor _ _ _ = 0
 
             getPadding :: String -> String
             getPadding input = case dropWhile (/= "padding") (words input) of
@@ -133,8 +164,44 @@ produceDiv (first:rest)
                 ("margin" : marginValue : _) -> marginValue
                 _ -> "0px"
 
+--          color     r|g|b 
+colorMap :: String -> Char -> Float 
+colorMap [] 'a' = 1.0
+colorMap [] _ = 0.0
+colorMap color 'r'
+    | color == "black" = 0.0
+    | color == "white" = 1.0
+    | color == "red" = 1.0
+    | color == "green" = 0.0
+    | color == "blue" = 0.0
+    | color == "transparent" = 0.0
+    | otherwise = 1.0
+colorMap color 'g'
+    | color == "black" = 0.0
+    | color == "white" = 1.0
+    | color == "red" = 0.0
+    | color == "green" = 1.0
+    | color == "blue" = 0.0
+    | color == "transparent" = 0.0
+    | otherwise = 1.0
+colorMap color 'b'
+    | color == "black" = 0.0
+    | color == "white" = 0.0
+    | color == "red" = 0.0
+    | color == "green" = 0.0
+    | color == "blue" = 1.0
+    | color == "transparent" = 0.0
+    | otherwise = 1.0
+colorMap color 'a'
+    | color == "black" = 0.0
+    | color == "white" = 0.0
+    | color == "red" = 0.0
+    | color == "green" = 0.0
+    | color == "blue" = 0.0
+    | color == "transparent" = 0.0
+    | otherwise = 1.0
+colorMap _ _ = 0.0
 
-keepDivs :: [Div] -> [Div]
 keepDivs [] = []
 keepDivs (div:rest)
     | isDefault div = keepDivs rest
