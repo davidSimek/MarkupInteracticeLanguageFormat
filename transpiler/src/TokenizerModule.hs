@@ -78,12 +78,6 @@ parse :: String -> Div
 parse [] = defaultDiv
 parse line = produceDiv (separateContent line)
     where
-        -- " and # are considered illegal for now
-        -- - commint -> ["comment", "", ""]
-        -- "this is text" lalala lalala -> ["div", "this is text", "lalala"] 
-        -- #colorText# font-size 20 font-color red -> ["style", "colorText", "font-size 20 font-color red"]
-        --
-        --
         separateContent :: String -> [String]
         separateContent [] = ["comment", "", ""]
         separateContent line
