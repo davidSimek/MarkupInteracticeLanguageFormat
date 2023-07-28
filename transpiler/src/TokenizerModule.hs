@@ -60,7 +60,7 @@ defaultDiv = Div
     , fr =   0  ---------------
     , fg =   0  -- FG colors --  
     , fb =   0  ---------------
-    , fa = 0.0
+    , fa = 1.0
 
     , margin = "0px"
     , padding = "0px"
@@ -127,42 +127,51 @@ produceDiv (first:rest)
                 isDefault = False,
                 content = parsedContent,
                 padding = getPadding style,
-                margin = getMargin style
-                br = getColor style 'r' "bg"
-                bg = getColor style 'g' "bg"
-                bb = getColor style 'b' "bg"
+                margin = getMargin style,
+                br = getColor style 'r' "bg",
+                bg = getColor style 'g' "bg",
+                bb = getColor style 'b' "bg",
+
+                fr = getColor style 'r' "color",
+                fg = getColor style 'g' "color",
+                fb = getColor style 'b' "color"
             }
 
-            --          style     channel finding
-            getColor :: String :: Char :: String -> Float 
-            getColor _ _ _ channel
-                | channel != 'r' && channel != 'g' && channel != 'b' && channel != 'a' = return 0.0
+            getColor :: String -> Char -> String -> Int 
+            getColor _ channel _
+                | channel /= 'r' && channel /= 'g' && channel /= 'b' = 0
             getColor input channel finding = case dropWhile (/= finding) (words input) of
-                -- check for r g b a
-                (finding : red : green : blue : alpha) 
-                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'r' -> read red
-                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'g' -> read green
-                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'b' -> read blue
-                    | isNumber red && isNumber green && isNumber blue && isNumber alpha && channel == 'a' -> read alpha
                 -- check for f g b
-                (finding : red : green : blue) 
-                    | isNumber red && isNumber green && isNumber blue && channel == 'r' -> read red
-                    | isNumber red && isNumber green && isNumber blue && channel == 'g' -> read green
-                    | isNumber red && isNumber green && isNumber blue && channel == 'b' -> read blue
+                (finding : red : green : blue : _) 
+                    | all isNumber [red, green, blue] && elem channel "rgb" -> maybe 0 id (readMaybe (getColorRGB channel [red, green, blue]))
                 -- check for color like "black" or "red"
-                (finding : color : _) -> colorMap color channel
-                    | isNumber color = colorMap color
-            getColor _ _ _ = 0
+                (finding : color : _) -> floor $ colorMap color channel
+                _ -> 0
+
+            readMaybe :: String -> Maybe Int
+            readMaybe s = case reads s of
+                [(x, "")] -> Just x 
+                _         -> Nothing
+        
+
+            getColorRGB :: Char -> [String] -> String
+            getColorRGB 'r' (r : _ : _) = r
+            getColorRGB 'g' (_ : g : _) = g
+            getColorRGB 'b' (_ : _ : b : _) = b
+            getColorRGB _ _ = "0"
+
+
+            getMargin :: String -> String
+            getMargin input = case dropWhile (/= "margin") (words input) of
+                ("margin" : marginValue : _) -> marginValue
+                _ -> "0px"
 
             getPadding :: String -> String
             getPadding input = case dropWhile (/= "padding") (words input) of
                 ("padding" : paddingValue : _) -> paddingValue
                 _ -> "0px"
 
-            getMargin :: String -> String
-            getMargin input = case dropWhile (/= "margin") (words input) of
-                ("margin" : marginValue : _) -> marginValue
-                _ -> "0px"
+
 
 --          color     r|g|b 
 colorMap :: String -> Char -> Float 
@@ -170,28 +179,28 @@ colorMap [] 'a' = 1.0
 colorMap [] _ = 0.0
 colorMap color 'r'
     | color == "black" = 0.0
-    | color == "white" = 1.0
-    | color == "red" = 1.0
+    | color == "white" = 255.0
+    | color == "red" = 255.0
     | color == "green" = 0.0
     | color == "blue" = 0.0
     | color == "transparent" = 0.0
-    | otherwise = 1.0
+    | otherwise = 255.0
 colorMap color 'g'
     | color == "black" = 0.0
-    | color == "white" = 1.0
+    | color == "white" = 255.0
     | color == "red" = 0.0
-    | color == "green" = 1.0
+    | color == "green" = 255.0
     | color == "blue" = 0.0
     | color == "transparent" = 0.0
-    | otherwise = 1.0
+    | otherwise = 255.0
 colorMap color 'b'
     | color == "black" = 0.0
     | color == "white" = 0.0
     | color == "red" = 0.0
     | color == "green" = 0.0
-    | color == "blue" = 1.0
+    | color == "blue" = 255.0
     | color == "transparent" = 0.0
-    | otherwise = 1.0
+    | otherwise = 255.0
 colorMap color 'a'
     | color == "black" = 0.0
     | color == "white" = 0.0
