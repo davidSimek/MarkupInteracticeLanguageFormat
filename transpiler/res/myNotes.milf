@@ -1,3 +1,7 @@
-"Čus"  color red   margin 10px bg blue  padding 30px
-"Hi"   color green margin 20px bg red   padding 30px
-"Đ]¶#" color blue  margin 30px bg green padding 30px
+#normal# color red
+"Čus"  style normal 
+"hello" color red
+"hello" color red
+"hello" color red
+"hello" color red
+"hello" color red
