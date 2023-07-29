@@ -19,10 +19,6 @@ transpiler to html
 <div style="background-color: rgba(0, 255, 0, 1.0); color: rgba(0, 0, 255 ,1.0); margin: 30px; padding: 30px;">Đ]¶#</div>
 ```
 ##### result:
-<div style="background-color: rgba(0, 0, 255, 1.0); color: rgba(255, 0, 0 ,1.0); margin: 10px; padding: 30px;">Čus</div>
-<div style="background-color: rgba(255, 0, 0, 1.0); color: rgba(0, 255, 0 ,1.0); margin: 20px; padding: 30px;">Hi</div>
-<div style="background-color: rgba(0, 255, 0, 1.0); color: rgba(0, 0, 255 ,1.0); margin: 30px; padding: 30px;">Đ]¶#</div>
-
 
 -----
 
