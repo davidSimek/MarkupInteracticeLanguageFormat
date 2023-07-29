@@ -1,4 +1,4 @@
-module TokenizerModule (tokenize, Div, toTag) where
+module TokenizerModule (keepDivs, makeDivs, Div, toTag) where
 
 import Text.Read (readMaybe)
 
@@ -19,36 +19,19 @@ data Div = Div
 
     , margin :: String
     , padding :: String
+
+    -- internal
+    , style :: String
     }
 
 
 toTag :: Div -> String
 toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ margin div ++ "; padding: " ++ padding div ++ ";\">" ++ content div ++ "</div>\n"
 
-errorDiv :: Div
-errorDiv = Div 
-    { isDefault = False
-    , content = "this is error div"
-    , font = "13px Arial, sans-serif"
-
-    , br =   0  ---------------
-    , bg =   0  -- BG colors -- 
-    , bb =   0  ---------------
-    , ba = 0.0
-
-    , fr =   0  ---------------
-    , fg =   0  -- FG colors --  
-    , fb =   0  ---------------
-    , fa =   1.0
-
-    , margin = "0px"
-    , padding = "20px"
-    }
-
 
 defaultDiv :: Div
 defaultDiv = Div 
-    { isDefault = False
+    { isDefault = True
     , content = ""
     , font = "0px Arial, sans-serif"
 
@@ -64,21 +47,20 @@ defaultDiv = Div
 
     , margin = "0px"
     , padding = "0px"
+    , style = ""
     }
 
+makeDivs :: [String] -> [Div] -> [Div]
+makeDivs [] _ = [defaultDiv { content = "problem in makeDivs function" }] 
+makeDivs (line:rest) styles
+    | getType line == "style" = makeDivs rest (parse line styles : styles)
+    | getType line == "div" = parse line styles : (makeDivs rest styles)
+makeDivs _ _ = [defaultDiv { content = "end of document" }]
 
-
-tokenize :: String -> [Div]
-tokenize [] = [errorDiv] 
-tokenize code = parseLogic (lines code)
-
-parseLogic :: [String] -> [Div]
-parseLogic [] = [errorDiv]
-parseLogic lines = keepDivs (map parse lines)
-
-parse :: String -> Div
-parse [] = defaultDiv
-parse line = produceDiv (separateContent line)
+--                 defStyles
+parse :: String -> [Div] ->    Div
+parse [] _ = defaultDiv { content = "problem in parse function" }
+parse line styles = produceDiv (separateContent line) styles
     where
         separateContent :: String -> [String]
         separateContent [] = ["comment", "", ""]
@@ -95,35 +77,36 @@ parse line = produceDiv (separateContent line)
             | char == finding = findSecondChar rest finding (foundCount + 1) (currentIndex + 1)
             | otherwise = findSecondChar rest finding foundCount (currentIndex + 1)
 
-
-        -- make this work on empty chars on start of line it future
-        getType :: String -> String
-        getType (char:rest)
-            | char == '"' = "div"
-            | char == '#' = "style"
-            | otherwise = "comment"
-
         splitOnN :: String -> Int -> [String]
         splitOnN (first:line) index = [take (index - 1) line, drop index line]
+
+getType :: String -> String
+getType [] = []
+getType (char:rest)
+    | char == '"' = "div"
+    | char == '#' = "style"
+    | char == '-' = "comment"
+    | otherwise =  getType rest
+
+
 
 isNumber :: String -> Bool
 isNumber str = case readMaybe str :: Maybe Double of
   Just _ -> True
   Nothing -> False
 
-produceDiv :: [String] -> Div
-produceDiv (first:rest)
-    | first == "div" = processDiv rest
-    | first == "class" = defaultDiv
-    | otherwise = defaultDiv
+--                         styles library
+produceDiv :: [String] -> [Div]            -> Div
+produceDiv (first:parsedContent:parsedStyle) styles
+    | first == "div" = styleDiv parsedContent parsedStyle (findStyle styles parsedContent)
+    | first == "style" = defaultDiv { content = "style" }
+    | first == "comment" = defaultDiv { content = "comment" }
+    | otherwise = defaultDiv { content = "comment without --" }
         where
-            processDiv :: [String] -> Div
-            processDiv [] = defaultDiv
-            processDiv (parsedContent:style) = styleDiv parsedContent style
-
-            styleDiv :: String -> [String] -> Div
-            styleDiv _ [] = defaultDiv
-            styleDiv parsedContent (style:_) = defaultDiv { 
+            --          content   style       predStyle
+            styleDiv :: String -> [String] -> Div ->    Div
+            styleDiv _ [] _ = defaultDiv
+            styleDiv parsedContent (style:_) styleDiv = styleDiv {
                 isDefault = False,
                 content = parsedContent,
                 padding = getPadding style,
@@ -155,6 +138,11 @@ produceDiv (first:rest)
                 [(x, "")] -> Just x 
                 _         -> Nothing
         
+            findStyle :: [Div] -> String -> Div
+            findStyle [] _ = defaultDiv { content = "problem in findStyle function" }
+            findStyle (div:rest) nameOfStyle
+                | content div == nameOfStyle = div
+                | otherwise = findStyle rest nameOfStyle
 
             getColorRGB :: Char -> [String] -> String
             getColorRGB 'r' (r : _ : _) = r
