@@ -7,6 +7,7 @@
 
 ### currently working on:
 transpiler to html  
+-----
 #### showcase:
 ##### source code:
 ```
@@ -22,8 +23,8 @@ transpiler to html
 ```
 ##### result:
 ![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/efd73962-c77f-4576-b3dc-ed2d2be048ea)
------
 
+-----
 ### idea:
 - simple markup language usable by non developers
 - free transpiler and other tools
