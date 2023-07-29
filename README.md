@@ -3,12 +3,8 @@
 ##### by David Šimek and Petr Hruška
 ##### publishing under <ins>GNU GENENRAL PUBLIC LICENSE V3.0</ins> (more in LICENSE file)
 
------
+----
 
-### currently working on:
-transpiler to html  
-
------
 #### showcase:
 ##### source code:
 ```
@@ -24,6 +20,11 @@ transpiler to html
 ```
 ##### result:
 ![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/efd73962-c77f-4576-b3dc-ed2d2be048ea)
+
+-----
+
+### currently working on:
+transpiler to html  
 
 -----
 ### idea:
