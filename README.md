@@ -9,9 +9,11 @@
 transpiler to html  
 #### showcase:
 ##### source code:
+```
 "Čus"  color red   margin 10px bg blue  padding 30px
 "Hi"   color green margin 20px bg red   padding 30px
 "Đ]¶#" color blue  margin 30px bg green padding 30px
+```
 ##### generated HTML:
 ```
 <div style="background-color: rgba(0, 0, 255, 1.0); color: rgba(255, 0, 0 ,1.0); margin: 10px; padding: 30px;">Čus</div>
