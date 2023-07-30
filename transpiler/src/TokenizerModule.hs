@@ -192,7 +192,7 @@ getPadding :: String -> String
 getPadding input = case dropWhile (/= "padding") (words input) of
     ("padding" : paddingValue : _) -> paddingValue
     _ -> "0px"
-
+padding
 getStyle :: [String] -> String
 getStyle (input:_) = case dropWhile (/= "style") (words input) of
     ("style" : styleValue : _) -> styleValue
