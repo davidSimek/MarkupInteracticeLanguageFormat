@@ -33,7 +33,7 @@ toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ s
 defaultDiv :: Div
 defaultDiv = Div 
     { isDefault = True
-    , content = ""
+    , content = "default"
     , font = "0px Arial, sans-serif"
 
     , br =   0 ---------------
@@ -47,7 +47,7 @@ defaultDiv = Div
     , fa = 1.0
 
     , margin = "0px"
-    , padding = "0px"
+    , padding = "10px"
     , style = ""
     }
 
@@ -110,9 +110,9 @@ isNumber str = case readMaybe str :: Maybe Double of
 produceDiv :: [String] -> [Div]            -> Div
 produceDiv (first:parsedContent:parsedStyle) styles
     -- | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles parsedContent) 
-    | first == "div"   = trace (content $ findStyle styles (getStyle parsedStyle)) styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
+    | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
     -- | first == "style" = trace (show $ findStyle styles  parsedContent) styleDiv parsedContent parsedStyle (findStyle styles parsedContent)
-    | first == "style" =  trace (content $ findStyle styles (getStyle parsedStyle)) styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
+    | first == "style" =  styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
         where
@@ -122,28 +122,17 @@ produceDiv (first:parsedContent:parsedStyle) styles
             styleDiv parsedContent (style:_) baseStyle = baseStyle {
                 isDefault = False,
                 content = parsedContent,
-                padding = getPadding style,
-                margin = getMargin style,
-                -- br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
-                -- bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
-                -- bb = if bb baseStyle /= bb defaultDiv then bb baseStyle else getColor style 'b' "bg",
-                -- ba = if ba baseStyle /= ba defaultDiv then ba baseStyle else getAlpha style "bg",
+                padding = if padding baseStyle /= padding defaultDiv then padding baseStyle else getPadding style,
+                margin = if margin baseStyle /= margin defaultDiv then margin baseStyle else getMargin style,
+                br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
+                bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
+                bb = if bb baseStyle /= bb defaultDiv then bb baseStyle else getColor style 'b' "bg",
+                ba = if ba baseStyle /= ba defaultDiv then ba baseStyle else getBgAlpha style "bg",
 
-                -- fr = if fr baseStyle /= fr defaultDiv then fr baseStyle else getColor style 'r' "color",
-                -- fg = if fg baseStyle /= fg defaultDiv then fg baseStyle else getColor style 'g' "color",
-                -- fb = if fb baseStyle /= fb defaultDiv then fb baseStyle else getColor style 'b' "color",
-                -- fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getAlpha style "color"
-
-                br = getColor style 'r' "bg",
-                bg = getColor style 'g' "bg",
-                bb = getColor style 'b' "bg",
-                ba = getAlpha style "bg",
-
-                fr = getColor style 'r' "color",
-                fg = getColor style 'g' "color",
-                fb = getColor style 'b' "color",
-                fa = getAlpha style "color"
-
+                fr = if fr baseStyle /= fr defaultDiv then fr baseStyle else getColor style 'r' "color",
+                fg = if fg baseStyle /= fg defaultDiv then fg baseStyle else getColor style 'g' "color",
+                fb = if fb baseStyle /= fb defaultDiv then fb baseStyle else getColor style 'b' "color",
+                fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getFgAlpha style "color"
             }
 
             getColor :: String -> Char -> String -> Int 
@@ -174,12 +163,19 @@ getColorRGB 'g' (_ : g : _) = g
 getColorRGB 'b' (_ : _ : b : _) = b
 getColorRGB _ _ = "0"
 
-getAlpha :: String -> String -> Float
-getAlpha input finding = case dropWhile (/= finding) (words input) of
+getFgAlpha :: String -> String -> Float
+getFgAlpha input finding = case dropWhile (/= finding) (words input) of
     (finding : r : g : b : a : _)
         | all isNumber [r, g, b, a] -> read a
     (finding : color : _) -> colorMap color 'a'
-    _ -> 0.0
+    _ -> 1.0 
+
+getBgAlpha :: String -> String -> Float
+getBgAlpha input finding = case dropWhile (/= finding) (words input) of
+    (finding : r : g : b : a : _)
+        | all isNumber [r, g, b, a] -> read a
+    (finding : color : _) -> colorMap color 'a'
+    _ -> 0.0 
 
 getMargin :: String -> String
 getMargin input = case dropWhile (/= "margin") (words input) of

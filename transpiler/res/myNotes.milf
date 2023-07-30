@@ -1,7 +1,5 @@
-#normal# color red
-"Čus"  style normal 
-"hello" color red
-"hello" color red
-"hello" color red
-"hello" color red
-"hello" color red
+#normal# color blue bg green padding 20px
+"this should be first style" style normal 
+"this too but with red text" style normal color red
+"this is default text"
+"is should be basic, but ok looking"
