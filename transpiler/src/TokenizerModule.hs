@@ -59,6 +59,7 @@ makeDivs (line:rest) styles
     -- | getType line == "style" = ((parse line styles) : (makeDivs rest (parse line styles : styles)))
     | getType line == "div" || getType line == "style" = (parse line styles: makeDivs rest (parse line styles : styles))
     | getType line == "comment" = makeDivs rest styles
+    | otherwise = makeDivs rest styles
 
 --                 defStyles
 parse :: String -> [Div] ->    Div
