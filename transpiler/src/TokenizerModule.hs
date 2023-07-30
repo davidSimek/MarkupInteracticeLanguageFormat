@@ -7,6 +7,7 @@ data Div = Div
     { isDefault :: Bool
     , content :: String
     , font :: String
+    , fontSize :: String
 
     , br :: Int  ---------------
     , bg :: Int  -- BG colors -- 
@@ -27,14 +28,15 @@ data Div = Div
 
 
 toTag :: Div -> String
-toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ margin div ++ "; padding: " ++ padding div ++ ";\">" ++ content div ++ "</div>\n"
+toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ margin div ++ "; padding: " ++ padding div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
 
 defaultDiv :: Div
 defaultDiv = Div 
     { isDefault = True
     , content = "default"
-    , font = "0px Arial, sans-serif"
+    , font = "Arial, sans-serif"
+    , fontSize = "15px"
 
     , br =   0 ---------------
     , bg =   0  -- BG colors -- 
@@ -122,7 +124,8 @@ produceDiv (first:parsedContent:parsedStyle) styles
                 isDefault = not isDiv,
                 content = parsedContent,
                 padding = if padding baseStyle /= padding defaultDiv then padding baseStyle else getPadding style,
-                margin = if margin baseStyle /= margin defaultDiv then margin baseStyle else getMargin style,
+                margin  = if margin  baseStyle /= margin defaultDiv  then margin baseStyle  else getMargin style,
+
                 br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
                 bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
                 bb = if bb baseStyle /= bb defaultDiv then bb baseStyle else getColor style 'b' "bg",
@@ -131,7 +134,10 @@ produceDiv (first:parsedContent:parsedStyle) styles
                 fr = if fr baseStyle /= fr defaultDiv then fr baseStyle else getColor style 'r' "color",
                 fg = if fg baseStyle /= fg defaultDiv then fg baseStyle else getColor style 'g' "color",
                 fb = if fb baseStyle /= fb defaultDiv then fb baseStyle else getColor style 'b' "color",
-                fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getFgAlpha style "color"
+                fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getFgAlpha style "color",
+
+                font = if font baseStyle /= font defaultDiv then font baseStyle else getFont style,                
+                fontSize = if fontSize baseStyle /= fontSize defaultDiv then fontSize baseStyle else getFontSize style
             }
 
             getColor :: String -> Char -> String -> Int 
@@ -191,7 +197,15 @@ getStyle (input:_) = case dropWhile (/= "style") (words input) of
     ("style" : styleValue : _) -> styleValue
     _ -> "default"
 
+getFont :: String -> String
+getFont input = case dropWhile (/= "font") (words input) of
+    ("font" : fontValue : _) -> fontValue
+    _ -> "Arial, sans-serif"
 
+getFontSize :: String -> String
+getFontSize input = case dropWhile (/= "fontSize") (words input) of
+    ("fontSize" : fontSizeValue : _) -> fontSizeValue
+    _ -> "15px"
 
 --          color     r|g|b 
 colorMap :: String -> Char -> Float 

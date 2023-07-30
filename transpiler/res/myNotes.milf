@@ -1,5 +1,5 @@
 #normal# color blue bg green padding 20px
 "this should be first style" style normal 
 "this too but with red text" style normal color red
-"this is default text"
+"this is default text" fontSize 10px
 "is should be basic, but ok looking"
