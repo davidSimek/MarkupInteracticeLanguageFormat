@@ -78,7 +78,6 @@ getType :: String -> String
 getType [] = []
 getType (char:rest)
     | char == '"' = "div"
-    -- | char == '#' = "style"
     | char == '#' = "style"
     | char == '-' = "comment"
     | char == ' ' = getType rest
@@ -110,17 +109,17 @@ isNumber str = case readMaybe str :: Maybe Double of
 produceDiv :: [String] -> [Div]            -> Div
 produceDiv (first:parsedContent:parsedStyle) styles
     -- | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles parsedContent) 
-    | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
+    | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
     -- | first == "style" = trace (show $ findStyle styles  parsedContent) styleDiv parsedContent parsedStyle (findStyle styles parsedContent)
-    | first == "style" =  styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle))
+    | first == "style" =  styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) False
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
         where
-            --          content   style       predStyle
-            styleDiv :: String -> [String] -> Div ->    Div
-            styleDiv _ [] _ = defaultDiv
-            styleDiv parsedContent (style:_) baseStyle = baseStyle {
-                isDefault = False,
+            --          content   style       predStyle isDiv
+            styleDiv :: String -> [String] -> Div ->    Bool -> Div
+            styleDiv _ [] _ _ = defaultDiv
+            styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
+                isDefault = not isDiv,
                 content = parsedContent,
                 padding = if padding baseStyle /= padding defaultDiv then padding baseStyle else getPadding style,
                 margin = if margin baseStyle /= margin defaultDiv then margin baseStyle else getMargin style,
