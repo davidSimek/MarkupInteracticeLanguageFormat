@@ -1,0 +1,9 @@
+#heading# color white bg black fontSize 30px padding 20px
+#normal# color black bg transparent fontSize 15px
+
+"this is heading" style heading
+"this is normal text" style normal
+"this is normal text but with green text" style normal color green
+"this has not style and is \"default\""
+"this has padding" padding 20px
+
