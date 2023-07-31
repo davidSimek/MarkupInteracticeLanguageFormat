@@ -1,9 +1,12 @@
-#heading# color white bg black fontSize 30px padding 20px
-#normal# color black bg transparent fontSize 15px
+#heading# color white bg black fontSize 30px inSpace 20px inJump 20px outSpace 10px
+#normal#  color black bg transparent fontSize 15px outSpace 10px
+#spacer#  bg black inSpace 2px outJump 10px outSpace 10px
 
-"this is heading" style heading
-"this is normal text" style normal
-"this is normal text but with green text" style normal color green
-"this has not style and is \"default\""
-"this has padding" padding 20px
-
+"Is this really a test?" style heading
+"Yes it is" style normal
+"" style spacer
+"red" color red bg black
+"green" color green bg black
+"blue" color blue bg black
+"black" color black bg white
+"white" color white bg black

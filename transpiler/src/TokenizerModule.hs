@@ -19,8 +19,10 @@ data Div = Div
     , fb :: Int  ---------------
     , fa :: Float
 
-    , margin :: String
-    , padding :: String
+    , outSpace :: String
+    , outJump :: String
+    , inSpace :: String
+    , inJump :: String
 
     -- internal
     , style :: String
@@ -28,7 +30,7 @@ data Div = Div
 
 
 toTag :: Div -> String
-toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ margin div ++ "; padding: " ++ padding div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
+toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
 
 defaultDiv :: Div
@@ -48,8 +50,10 @@ defaultDiv = Div
     , fb =   0  ---------------
     , fa = 1.0
 
-    , margin = "0px"
-    , padding = "10px"
+    , outSpace = "0px"
+    , outJump = "0px"
+    , inSpace = "10px"
+    , inJump = "10px"
     , style = ""
     }
 
@@ -124,8 +128,10 @@ produceDiv (first:parsedContent:parsedStyle) styles
             styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
                 isDefault = not isDiv,
                 content = parsedContent,
-                padding = if padding baseStyle /= padding defaultDiv then padding baseStyle else getPadding style,
-                margin  = if margin  baseStyle /= margin defaultDiv  then margin baseStyle  else getMargin style,
+                inSpace = if inSpace baseStyle /= inSpace defaultDiv then inSpace baseStyle else getInSpace style,
+                inJump = if inJump baseStyle /= inJump defaultDiv then inJump baseStyle else getInJump style,
+                outSpace  = if outSpace baseStyle /= outSpace defaultDiv  then outSpace baseStyle  else getOutSpace style,
+                outJump  = if outJump baseStyle /= outJump defaultDiv  then outJump baseStyle  else getOutJump style,
 
                 br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
                 bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
@@ -183,16 +189,26 @@ getBgAlpha input finding = case dropWhile (/= finding) (words input) of
     (finding : color : _) -> colorMap color 'a'
     _ -> 0.0 
 
-getMargin :: String -> String
-getMargin input = case dropWhile (/= "margin") (words input) of
-    ("margin" : marginValue : _) -> marginValue
+getOutSpace :: String -> String
+getOutSpace input = case dropWhile (/= "outSpace") (words input) of
+    ("outSpace" : outSpaceValue : _) -> outSpaceValue
     _ -> "0px"
 
-getPadding :: String -> String
-getPadding input = case dropWhile (/= "padding") (words input) of
-    ("padding" : paddingValue : _) -> paddingValue
+getOutJump :: String -> String
+getOutJump input = case dropWhile (/= "outJump") (words input) of
+    ("outJump" : outJumpValue : _) -> outJumpValue
     _ -> "0px"
-padding
+
+getInSpace :: String -> String
+getInSpace input = case dropWhile (/= "inSpace") (words input) of
+    ("inSpace" : inSpaceValue : _) -> inSpaceValue
+    _ -> "0px"
+
+getInJump :: String -> String
+getInJump input = case dropWhile (/= "inJump") (words input) of
+    ("inJump" : inJumpValue : _) -> inJumpValue
+    _ -> "10px"
+
 getStyle :: [String] -> String
 getStyle (input:_) = case dropWhile (/= "style") (words input) of
     ("style" : styleValue : _) -> styleValue
@@ -230,7 +246,7 @@ colorMap color 'g'
     | otherwise = 255.0
 colorMap color 'b'
     | color == "black" = 0.0
-    | color == "white" = 0.0
+    | color == "white" = 255.0
     | color == "red" = 0.0
     | color == "green" = 0.0
     | color == "blue" = 255.0
