@@ -36,11 +36,13 @@ separateContent line
     | getType line == "divQ" = ["div"] ++ splitOnNS line (findDolar line 0)
     | otherwise = ["comment", "", ""]
 
+-- splits and removes first character
 splitOnN :: String -> Int -> [String]
 splitOnN (first:line) index = [take (index - 1) line, drop index line]
 
+-- splits normally
 splitOnNS :: String -> Int -> [String]
-splitOnNS (first:line) index = [first:take (index - 1 ) line, drop index line]
+splitOnNS (line) index = [take (index - 1 ) line, drop index line]
 
 
 --           line      index 
