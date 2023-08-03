@@ -1,9 +1,10 @@
 #heading# color white bg black fontSize 30px inSpace 20px inJump 20px outSpace 10px
 #normal#  color black bg transparent fontSize 15px outSpace 10px
 #spacer#  bg black inSpace 2px outJump 10px outSpace 10px
-"Is this really a test?" style heading
-hello $ style heading
-"Yes it is \lol" style normal
+Is this really a test? $ style heading
+Yes it is $ style normal
+here I have fake style \$ and it should work $ style normal
+"here I have doubleQuotes \" and it should work" style normal
 "" style spacer
 "red" color red bg black
 "green" color green bg black

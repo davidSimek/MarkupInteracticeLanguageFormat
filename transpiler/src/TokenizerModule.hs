@@ -18,9 +18,6 @@ makeDivs (line:rest) styles
     | getType line == "comment" = makeDivs rest styles
     | otherwise = makeDivs rest styles
 
-escapeBackslash :: Char -> String
-escapeBackslash '\\' = "\\\\"
-escapeBackslash c = [c]
 
 --                 defStyles
 parse :: String -> [Div] ->    Div
@@ -46,9 +43,8 @@ splitOnNS (line) index = [take (index - 1 ) line, drop index line]
 
 
 --           line      index 
---
 isEscapedDollar :: String -> Bool
-isEscapedDollar ('\\':'$':_) = True -- Check for the escape sequence '\$'
+isEscapedDollar ('\\':'$':_) = True
 isEscapedDollar (_:rest) = isEscapedDollar rest
 isEscapedDollar [] = False
 
@@ -62,6 +58,8 @@ findDolar (char:rest) index
 getType :: String -> String
 getType [] = "comment"
 getType ('\\':'$':rest) = getType rest
+getType ('\\':'#':rest) = getType rest
+getType ('\\':'"':rest) = getType rest
 getType (char:rest)
     | char == '"' = "div"
     | char == '#' = "style"
@@ -72,6 +70,7 @@ getType (char:rest)
 
 findSecDoub :: String -> Int -> Int -> Int
 findSecDoub [] _ currentIndex = currentIndex
+findSecDoub ('\\':'"':rest) foundCount currentIndex = findSecDoub rest foundCount (currentIndex + 2)
 findSecDoub (char:rest) foundCount currentIndex
     | char == '"' && foundCount + 1 == 2 = currentIndex
     | char == '"' = findSecDoub rest (foundCount + 1) (currentIndex + 1)
