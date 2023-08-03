@@ -33,6 +33,7 @@
 <div style="background-color: rgba(0, 0, 0, 1.0); color: rgba(255, 255, 255, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">white</div>
 ```
 ##### result:
+![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/0d6f0259-ade7-4c94-8e07-e085c9e898bb)
 
 -----
 
