@@ -3,64 +3,17 @@ module TokenizerModule (keepDivs, makeDivs, Div, toTag) where
 import Text.Read (readMaybe)
 import Debug.Trace
 
-data Div = Div 
-    { isDefault :: Bool
-    , content :: String
-    , font :: String
-    , fontSize :: String
-
-    , br :: Int  ---------------
-    , bg :: Int  -- BG colors -- 
-    , bb :: Int  ---------------
-    , ba :: Float
-
-    , fr :: Int  ---------------
-    , fg :: Int  -- FG colors --  
-    , fb :: Int  ---------------
-    , fa :: Float
-
-    , outSpace :: String
-    , outJump :: String
-    , inSpace :: String
-    , inJump :: String
-
-    -- internal
-    , style :: String
-    } deriving (Show)
-
+-- my modules
+import DivStructModule
+import ColorsModule
+import UtilModule
 
 toTag :: Div -> String
 toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
-
-defaultDiv :: Div
-defaultDiv = Div 
-    { isDefault = True
-    , content = "default"
-    , font = "Arial, sans-serif"
-    , fontSize = "15px"
-
-    , br =   0 ---------------
-    , bg =   0  -- BG colors -- 
-    , bb =   0 ---------------
-    , ba = 0.0
-
-    , fr =   0  ---------------
-    , fg =   0  -- FG colors --  
-    , fb =   0  ---------------
-    , fa = 1.0
-
-    , outSpace = "0px"
-    , outJump = "0px"
-    , inSpace = "10px"
-    , inJump = "10px"
-    , style = ""
-    }
-
 makeDivs :: [String] -> [Div] -> [Div]
 makeDivs [] _ = [defaultDiv { content = "end of document" }] 
 makeDivs (line:rest) styles
-    -- | getType line == "style" = ((parse line styles) : (makeDivs rest (parse line styles : styles)))
     | getType line == "div" || getType line == "style" = (parse line styles: makeDivs rest (parse line styles : styles))
     | getType line == "comment" = makeDivs rest styles
     | otherwise = makeDivs rest styles
@@ -106,161 +59,45 @@ findSecHash (char:rest) foundCount currentIndex
     | otherwise = findSecHash rest foundCount (currentIndex + 1)
 
 
-
-isNumber :: String -> Bool
-isNumber str = case readMaybe str :: Maybe Double of
-  Just _ -> True
-  Nothing -> False
-
 --                        styles library
 produceDiv :: [String] -> [Div]            -> Div
 produceDiv (first:parsedContent:parsedStyle) styles
-    -- | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles parsedContent) 
     | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
-    -- | first == "style" = trace (show $ findStyle styles  parsedContent) styleDiv parsedContent parsedStyle (findStyle styles parsedContent)
     | first == "style" =  styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) False
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
-        where
-            --          content   style       predStyle isDiv
-            styleDiv :: String -> [String] -> Div ->    Bool -> Div
-            styleDiv _ [] _ _ = defaultDiv
-            styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
-                isDefault = not isDiv,
-                content = parsedContent,
-                inSpace = if inSpace baseStyle /= inSpace defaultDiv then inSpace baseStyle else getInSpace style,
-                inJump = if inJump baseStyle /= inJump defaultDiv then inJump baseStyle else getInJump style,
-                outSpace  = if outSpace baseStyle /= outSpace defaultDiv  then outSpace baseStyle  else getOutSpace style,
-                outJump  = if outJump baseStyle /= outJump defaultDiv  then outJump baseStyle  else getOutJump style,
 
-                br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
-                bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
-                bb = if bb baseStyle /= bb defaultDiv then bb baseStyle else getColor style 'b' "bg",
-                ba = if ba baseStyle /= ba defaultDiv then ba baseStyle else getBgAlpha style "bg",
+--          content   style       predStyle isDiv
+styleDiv :: String -> [String] -> Div ->    Bool -> Div
+styleDiv _ [] _ _ = defaultDiv
+styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
+    isDefault = not isDiv,
+    content = parsedContent,
+    inSpace = if inSpace baseStyle /= inSpace defaultDiv then inSpace baseStyle else getInSpace style,
+    inJump = if inJump baseStyle /= inJump defaultDiv then inJump baseStyle else getInJump style,
+    outSpace  = if outSpace baseStyle /= outSpace defaultDiv  then outSpace baseStyle  else getOutSpace style,
+    outJump  = if outJump baseStyle /= outJump defaultDiv  then outJump baseStyle  else getOutJump style,
 
-                fr = if fr baseStyle /= fr defaultDiv then fr baseStyle else getColor style 'r' "color",
-                fg = if fg baseStyle /= fg defaultDiv then fg baseStyle else getColor style 'g' "color",
-                fb = if fb baseStyle /= fb defaultDiv then fb baseStyle else getColor style 'b' "color",
-                fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getFgAlpha style "color",
+    br = if br baseStyle /= br defaultDiv then br baseStyle else getColor style 'r' "bg",
+    bg = if bg baseStyle /= bg defaultDiv then bg baseStyle else getColor style 'g' "bg",
+    bb = if bb baseStyle /= bb defaultDiv then bb baseStyle else getColor style 'b' "bg",
+    ba = if ba baseStyle /= ba defaultDiv then ba baseStyle else getBgAlpha style "bg",
 
-                font = if font baseStyle /= font defaultDiv then font baseStyle else getFont style,                
-                fontSize = if fontSize baseStyle /= fontSize defaultDiv then fontSize baseStyle else getFontSize style
-            }
+    fr = if fr baseStyle /= fr defaultDiv then fr baseStyle else getColor style 'r' "color",
+    fg = if fg baseStyle /= fg defaultDiv then fg baseStyle else getColor style 'g' "color",
+    fb = if fb baseStyle /= fb defaultDiv then fb baseStyle else getColor style 'b' "color",
+    fa = if fa baseStyle /= fa defaultDiv then fa baseStyle else getFgAlpha style "color",
 
-            getColor :: String -> Char -> String -> Int 
-            getColor _ channel _
-                | channel /= 'r' && channel /= 'g' && channel /= 'b' = 0
-            getColor input channel finding = case dropWhile (/= finding) (words input) of
-                -- check for f g b
-                (finding : red : green : blue : _) 
-                    | all isNumber [red, green, blue] && elem channel "rgb" -> maybe 0 id (readMaybe (getColorRGB channel [red, green, blue]))
-                -- check for color like "black" or "red"
-                (finding : color : _) -> floor $ colorMap color channel
-                _ -> 0
-
-            readMaybe :: String -> Maybe Int
-            readMaybe s = case reads s of
-                [(x, "")] -> Just x 
-                _         -> Nothing
-        
+    font = if font baseStyle /= font defaultDiv then font baseStyle else getFont style,                
+    fontSize = if fontSize baseStyle /= fontSize defaultDiv then fontSize baseStyle else getFontSize style
+}
+     
 findStyle :: [Div] -> String -> Div
 findStyle [] styleString = defaultDiv { content = ("didn't find style" ++ styleString) }
 findStyle (div:rest) nameOfStyle
     | content div == nameOfStyle = div
     | otherwise = findStyle rest nameOfStyle
 
-getColorRGB :: Char -> [String] -> String
-getColorRGB 'r' (r : _ : _) = r
-getColorRGB 'g' (_ : g : _) = g
-getColorRGB 'b' (_ : _ : b : _) = b
-getColorRGB _ _ = "0"
-
-getFgAlpha :: String -> String -> Float
-getFgAlpha input finding = case dropWhile (/= finding) (words input) of
-    (finding : r : g : b : a : _)
-        | all isNumber [r, g, b, a] -> read a
-    (finding : color : _) -> colorMap color 'a'
-    _ -> 1.0 
-
-getBgAlpha :: String -> String -> Float
-getBgAlpha input finding = case dropWhile (/= finding) (words input) of
-    (finding : r : g : b : a : _)
-        | all isNumber [r, g, b, a] -> read a
-    (finding : color : _) -> colorMap color 'a'
-    _ -> 0.0 
-
-getOutSpace :: String -> String
-getOutSpace input = case dropWhile (/= "outSpace") (words input) of
-    ("outSpace" : outSpaceValue : _) -> outSpaceValue
-    _ -> "0px"
-
-getOutJump :: String -> String
-getOutJump input = case dropWhile (/= "outJump") (words input) of
-    ("outJump" : outJumpValue : _) -> outJumpValue
-    _ -> "0px"
-
-getInSpace :: String -> String
-getInSpace input = case dropWhile (/= "inSpace") (words input) of
-    ("inSpace" : inSpaceValue : _) -> inSpaceValue
-    _ -> "0px"
-
-getInJump :: String -> String
-getInJump input = case dropWhile (/= "inJump") (words input) of
-    ("inJump" : inJumpValue : _) -> inJumpValue
-    _ -> "10px"
-
-getStyle :: [String] -> String
-getStyle (input:_) = case dropWhile (/= "style") (words input) of
-    ("style" : styleValue : _) -> styleValue
-    _ -> "default"
-
-getFont :: String -> String
-getFont input = case dropWhile (/= "font") (words input) of
-    ("font" : fontValue : _) -> fontValue
-    _ -> "Arial, sans-serif"
-
-getFontSize :: String -> String
-getFontSize input = case dropWhile (/= "fontSize") (words input) of
-    ("fontSize" : fontSizeValue : _) -> fontSizeValue
-    _ -> "15px"
-
---          color     r|g|b 
-colorMap :: String -> Char -> Float 
-colorMap [] 'a' = 1.0
-colorMap [] _ = 0.0
-colorMap color 'r'
-    | color == "black" = 0.0
-    | color == "white" = 255.0
-    | color == "red" = 255.0
-    | color == "green" = 0.0
-    | color == "blue" = 0.0
-    | color == "transparent" = 0.0
-    | otherwise = 255.0
-colorMap color 'g'
-    | color == "black" = 0.0
-    | color == "white" = 255.0
-    | color == "red" = 0.0
-    | color == "green" = 255.0
-    | color == "blue" = 0.0
-    | color == "transparent" = 0.0
-    | otherwise = 255.0
-colorMap color 'b'
-    | color == "black" = 0.0
-    | color == "white" = 255.0
-    | color == "red" = 0.0
-    | color == "green" = 0.0
-    | color == "blue" = 255.0
-    | color == "transparent" = 0.0
-    | otherwise = 255.0
-colorMap color 'a'
-    | color == "black" = 1.0
-    | color == "white" = 1.0
-    | color == "red" = 1.0
-    | color == "green" = 1.0
-    | color == "blue" = 1.0
-    | color == "transparent" = 0.0
-    | otherwise = 0.0
-colorMap _ _ = 0.0
 
 keepDivs [] = []
 keepDivs (div:rest)

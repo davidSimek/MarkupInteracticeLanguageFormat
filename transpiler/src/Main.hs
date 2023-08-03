@@ -1,3 +1,5 @@
+module Main where
+
 -- My Modules
 import TokenizerModule
 
