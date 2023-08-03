@@ -1,4 +1,4 @@
-module ColorsModule (colorMap, getColorRGB, getFgAlpha, getBgAlpha, getFgAlpha, getBgAlpha, getColor) where
+module ColorsModule (colorMap, getColorRGB, getFgAlpha, getBgAlpha, getColor) where
 
 import Text.Read (readMaybe)
 

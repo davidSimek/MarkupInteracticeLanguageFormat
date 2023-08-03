@@ -14,18 +14,14 @@ toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ s
 makeDivs :: [String] -> [Div] -> [Div]
 makeDivs [] _ = [defaultDiv { content = "end of document" }] 
 makeDivs (line:rest) styles
-    | getType line == "div" || getType line == "style" || getType line == "divQ" = (parse line styles: makeDivs rest (parse line styles : styles))
+    | getType line == "div" || getType line == "style" = (parse line styles: makeDivs rest (parse line styles : styles))
     | getType line == "comment" = makeDivs rest styles
     | otherwise = makeDivs rest styles
-
-escapeBackslash :: Char -> String
-escapeBackslash '\\' = "\\\\"
-escapeBackslash c = [c]
 
 --                 defStyles
 parse :: String -> [Div] ->    Div
 parse [] _ = defaultDiv { content = "problem in parse function" }
-parse line styles =  produceDiv (separateContent (concatMap escapeBackslash line)) styles
+parse line styles =  produceDiv (separateContent line) styles
 
 separateContent :: String -> [String]
 separateContent [] = ["comment", "", ""]
@@ -33,39 +29,20 @@ separateContent line
     | getType line == "div"   = ["div"]   ++ splitOnN line (findSecDoub line 0 0)
     | getType line == "style" = ["style"] ++ splitOnN line (findSecHash line 0 0) 
     | getType line == "comment" = ["comment", "", ""]
-    | getType line == "divQ" = ["div"] ++ splitOnNS line (findDolar line 0)
+    | getType line == "divQ" = splitOnN line (findDolar line)
     | otherwise = ["comment", "", ""]
 
 splitOnN :: String -> Int -> [String]
 splitOnN (first:line) index = [take (index - 1) line, drop index line]
 
-splitOnNS :: String -> Int -> [String]
-splitOnNS (first:line) index = [first:take (index - 1 ) line, drop index line]
-
-
---           line      index 
---
-isEscapedDollar :: String -> Bool
-isEscapedDollar ('\\':'$':_) = True -- Check for the escape sequence '\$'
-isEscapedDollar (_:rest) = isEscapedDollar rest
-isEscapedDollar [] = False
-
-findDolar :: String -> Int -> Int
-findDolar [] index = index
-findDolar ('\\':'$':rest) index = findDolar rest (index + 2) -- Skip the escaped '\$'
-findDolar (char:rest) index
-    | char == '$' && not (isEscapedDollar rest) = index
-    | otherwise = findDolar rest (index + 1)
-
 getType :: String -> String
-getType [] = "comment"
-getType ('\\':'$':rest) = getType rest
+getType [] = []
 getType (char:rest)
     | char == '"' = "div"
     | char == '#' = "style"
-    | char == '$' = "divQ"
+    | char == '-' = "comment"
     | char == ' ' = getType rest
-    | otherwise = getType rest
+    | otherwise = "comment"
 
 
 findSecDoub :: String -> Int -> Int -> Int
@@ -87,8 +64,7 @@ findSecHash (char:rest) foundCount currentIndex
 produceDiv :: [String] -> [Div]            -> Div
 produceDiv (first:parsedContent:parsedStyle) styles
     | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
-    | first == "divQ"  = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
-    | first == "style" = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) False
+    | first == "style" =  styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) False
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
 
