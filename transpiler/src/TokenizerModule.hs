@@ -8,9 +8,13 @@ import DivStructModule
 import ColorsModule
 import UtilModule
 
+-- converts Div to HTML tag
 toTag :: Div -> String
 toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
+-- iterates threw lines
+-- collects styles defined by user
+-- applies  styles defined by user
 makeDivs :: [String] -> [Div] -> [Div]
 makeDivs [] _ = [defaultDiv { content = "end of document" }] 
 makeDivs (line:rest) styles
@@ -19,11 +23,16 @@ makeDivs (line:rest) styles
     | otherwise = makeDivs rest styles
 
 
+-- processes line to and returns Div
 --                 defStyles
 parse :: String -> [Div] ->    Div
 parse [] _ = defaultDiv { content = "problem in parse function" }
 parse line styles =  produceDiv (separateContent (concatMap escapeBackslash line)) styles
 
+-- splits line into array of 3
+-- 1. type of element
+-- 2. content/name
+-- 3. styles
 separateContent :: String -> [String]
 separateContent [] = ["comment", "", ""]
 separateContent line
@@ -33,21 +42,21 @@ separateContent line
     | getType line == "divQ" = ["div"] ++ splitOnNS line (findDolar line 0)
     | otherwise = ["comment", "", ""]
 
--- splits and removes first character
+-- splits string on index provided and removes first char
 splitOnN :: String -> Int -> [String]
 splitOnN (first:line) index = [take (index - 1) line, drop index line]
 
--- splits normally
+-- splits string on index provided
 splitOnNS :: String -> Int -> [String]
 splitOnNS (line) index = [take (index - 1 ) line, drop index line]
 
-
---           line      index 
+-- tests if pair of chars is escaped dolar
 isEscapedDollar :: String -> Bool
 isEscapedDollar ('\\':'$':_) = True
 isEscapedDollar (_:rest) = isEscapedDollar rest
 isEscapedDollar [] = False
 
+-- returns index of dolar
 findDolar :: String -> Int -> Int
 findDolar [] index = index
 findDolar ('\\':'$':rest) index = findDolar rest (index + 2) -- Skip the escaped '\$'
@@ -55,6 +64,7 @@ findDolar (char:rest) index
     | char == '$' && not (isEscapedDollar rest) = index
     | otherwise = findDolar rest (index + 1)
 
+-- returns type of element
 getType :: String -> String
 getType [] = "comment"
 getType ('\\':'$':rest) = getType rest
@@ -68,6 +78,7 @@ getType (char:rest)
     | otherwise = getType rest
 
 
+-- returns index of second "
 findSecDoub :: String -> Int -> Int -> Int
 findSecDoub [] _ currentIndex = currentIndex
 findSecDoub ('\\':'"':rest) foundCount currentIndex = findSecDoub rest foundCount (currentIndex + 2)
@@ -76,6 +87,7 @@ findSecDoub (char:rest) foundCount currentIndex
     | char == '"' = findSecDoub rest (foundCount + 1) (currentIndex + 1)
     | otherwise = findSecDoub rest foundCount (currentIndex + 1)
 
+-- returns index of second #
 findSecHash :: String -> Int -> Int -> Int
 findSecHash [] _ currentIndex = currentIndex
 findSecHash (char:rest) foundCount currentIndex
@@ -83,7 +95,7 @@ findSecHash (char:rest) foundCount currentIndex
     | char == '#' = findSecHash rest (foundCount + 1) (currentIndex + 1)
     | otherwise = findSecHash rest foundCount (currentIndex + 1)
 
-
+-- accepts array of 3 (parded line) and produced Div
 --                        styles library
 produceDiv :: [String] -> [Div]            -> Div
 produceDiv (first:parsedContent:parsedStyle) styles
@@ -93,6 +105,7 @@ produceDiv (first:parsedContent:parsedStyle) styles
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
 
+-- applies style to Div based on style
 --          content   style       predStyle isDiv
 styleDiv :: String -> [String] -> Div ->    Bool -> Div
 styleDiv _ [] _ _ = defaultDiv
@@ -118,13 +131,14 @@ styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
     fontSize = if fontSize baseStyle /= fontSize defaultDiv then fontSize baseStyle else getFontSize style
 }
      
+-- iterates threw styles library and tries to find matching one
 findStyle :: [Div] -> String -> Div
 findStyle [] styleString = defaultDiv { content = ("didn't find style" ++ styleString) }
 findStyle (div:rest) nameOfStyle
     | content div == nameOfStyle = div
     | otherwise = findStyle rest nameOfStyle
 
-
+-- iterates threw divs and filters ones marked ad "isDefault"
 keepDivs [] = []
 keepDivs (div:rest)
     | isDefault div = keepDivs rest

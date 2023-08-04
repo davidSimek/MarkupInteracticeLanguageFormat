@@ -26,9 +26,15 @@ module DivStructModule (
     , getOutJump
     , getInSpace
     , getInJump
+    , getColor
     ) 
 where
+import Text.Read (readMaybe)
 
+-- my modules
+import ColorsModule
+import UtilModule
+-- represents div and all its attributes
 data Div = Div 
     { isDefault :: Bool
     , content :: String
@@ -54,6 +60,7 @@ data Div = Div
     , style :: String
     } deriving (Show)
 
+-- woks as base if no style is defined
 defaultDiv :: Div
 defaultDiv = Div 
     { isDefault = True
@@ -78,6 +85,7 @@ defaultDiv = Div
     , style = ""
     }
 
+-- these return requested valued from style part of line
 getOutSpace :: String -> String
 getOutSpace input = case dropWhile (/= "outSpace") (words input) of
     ("outSpace" : outSpaceValue : _) -> outSpaceValue
@@ -113,4 +121,13 @@ getFontSize input = case dropWhile (/= "fontSize") (words input) of
     ("fontSize" : fontSizeValue : _) -> fontSizeValue
     _ -> "15px"
 
-
+getColor :: String -> Char -> String -> Int 
+getColor _ channel _
+    | channel /= 'r' && channel /= 'g' && channel /= 'b' = 0
+getColor input channel finding = case dropWhile (/= finding) (words input) of
+    -- check for f g b
+    (finding : red : green : blue : _) 
+        | all isNumber [red, green, blue] && elem channel "rgb" -> maybe 0 id (readMaybe (getColorRGB channel [red, green, blue]))
+    -- check for color like "black" or "red"
+    (finding : color : _) -> floor $ colorMap color channel
+    _ -> 0

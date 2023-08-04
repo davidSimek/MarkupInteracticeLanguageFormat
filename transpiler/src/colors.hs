@@ -1,6 +1,6 @@
-module ColorsModule (colorMap, getColorRGB, getFgAlpha, getBgAlpha, getColor) where
+module ColorsModule (colorMap, getColorRGB, getFgAlpha, getBgAlpha) where
 
-import Text.Read (readMaybe)
+--import Text.Read (readMaybe)
 
 import UtilModule
 
@@ -48,6 +48,8 @@ getColorRGB 'g' (_ : g : _) = g
 getColorRGB 'b' (_ : _ : b : _) = b
 getColorRGB _ _ = "0"
 
+-- alpha has specific function for fg and bg for ease of implementation
+-- expect it to change one day, but no need for it now
 getFgAlpha :: String -> String -> Float
 getFgAlpha input finding = case dropWhile (/= finding) (words input) of
     (finding : r : g : b : a : _)
@@ -63,13 +65,4 @@ getBgAlpha input finding = case dropWhile (/= finding) (words input) of
     _ -> 0.0 
 
 
-getColor :: String -> Char -> String -> Int 
-getColor _ channel _
-    | channel /= 'r' && channel /= 'g' && channel /= 'b' = 0
-getColor input channel finding = case dropWhile (/= finding) (words input) of
-    -- check for f g b
-    (finding : red : green : blue : _) 
-        | all isNumber [red, green, blue] && elem channel "rgb" -> maybe 0 id (readMaybe (getColorRGB channel [red, green, blue]))
-    -- check for color like "black" or "red"
-    (finding : color : _) -> floor $ colorMap color channel
-    _ -> 0
+
