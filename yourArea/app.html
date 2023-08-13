@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<title> myArea </title>
+
+<style>
+    *{
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
+    .content{
+        background-color: black;
+        width: 100%;
+        height: calc(100vh - 31px);
+    }
+    .controls{
+        display: flex;
+        border-top: white solid 1px;
+        background-color: black;
+        width: 100%;
+        height: 30px;
+        justify-content: center;
+        align-items: center;
+    }
+    input[type="text"] {
+      background-color: black;
+    }
+</style>
+<script>
+function calculateHash(content) {
+  let hash = 0;
+
+  for (let i = 0; i < content.length; i++) {
+    hash = (hash * 31 + content.charCodeAt(i)) & 0xFFFFFFFF;
+  }
+
+  return hash;
+}
+
+function fetchAndReplace() {
+  const filePath = document.getElementById('filePath').value;
+  document.getElementById('requesting').innerHTML = filePath;
+  fetch(`http://localhost:6969/fetch?dir=${encodeURIComponent(filePath)}`)
+    .then(response => response.text())
+    .then(fetchedContent => {
+      const container = document.getElementById('content');
+      
+      const currentHash = calculateHash(container.textContent);
+
+      if (fetchedContent && calculateHash(fetchedContent) !== currentHash) {
+        container.textContent = fetchedContent;
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching content:', error);
+    });
+}
+
+// Fetch and replace content periodically
+setInterval(() => {
+  fetchAndReplace();
+}, 1000); // 1000 milliseconds = 1 second
+</script>
+</head>
+<body>
+    <div id="content" class="content">
+        <p> Server is not running probably?
+        <p>Didn't even fetch first time.
+    </div>
+    <div id="controls" class="controls">
+        <input type="text" style="filePath" id="filePath" name="textInput">
+        <div id="requesting">requesting...</div>
+    </div>
+</html>
