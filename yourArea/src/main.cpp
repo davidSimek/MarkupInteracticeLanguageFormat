@@ -34,15 +34,15 @@ int main(int argc, char** argv) {
             std::cout << "before transpiling \"" << input << "\"" << std::endl;
             std::cout << "after transpiling\"" << result << "\"" << std:: endl;
 
-            file.close();
-            delete[] result;
 
             if (result) {
-                std::cout << "it sends now" << std::endl;
+                std::cout << "sending: \"" << result << "\"" << std::endl;
                 res.set_content(result, "text/plain");
             } else {
                 res.set_content("couldn't call haskell transpile function", "text/plain");
             }
+            file.close();
+            delete[] result;
 
         } else {
             std::cout << "File: " << filePath << " was not found\n";
