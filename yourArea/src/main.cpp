@@ -26,11 +26,17 @@ int main(int argc, char** argv) {
         // Open and read the specified file
         std::ifstream file(filePath);
         if (file.is_open()) {
+            std::cout << "found file" << std::endl;
             std::stringstream buffer;
             buffer << file.rdbuf();
+            file.close();
             const char* input = buffer.str().c_str();
+            std::cout << "before transpiling \"" << input << "\"" << std::endl;
             const char* result = (char*)hTranspile((void*)input);
+            std::cout << "after transpiling\"" << result << "\"" << std:: endl;
+
             if (result) {
+                std::cout << "it sends now" << std::endl;
                 res.set_content(result, "text/plain");
             } else {
                 res.set_content("couldn't call haskell transpile function", "text/plain");
