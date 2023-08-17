@@ -26,14 +26,16 @@ int main(int argc, char** argv) {
         // Open and read the specified file
         std::ifstream file(filePath);
         if (file.is_open()) {
-            std::cout << "found file" << std::endl;
             std::stringstream buffer;
             buffer << file.rdbuf();
-            file.close();
-            const char* input = buffer.str().c_str();
+            std::string input = buffer.str();
+            const char* result = (char*)hTranspile((void*)input.c_str());
+
             std::cout << "before transpiling \"" << input << "\"" << std::endl;
-            const char* result = (char*)hTranspile((void*)input);
             std::cout << "after transpiling\"" << result << "\"" << std:: endl;
+
+            file.close();
+            delete[] result;
 
             if (result) {
                 std::cout << "it sends now" << std::endl;

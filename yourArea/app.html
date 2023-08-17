@@ -10,7 +10,7 @@
         padding: 0;
     }
     .content{
-        background-color: black;
+        background-color: white;
         width: 100%;
         height: calc(100vh - 31px);
     }
@@ -28,15 +28,6 @@
     }
 </style>
 <script>
-function calculateHash(content) {
-  let hash = 0;
-
-  for (let i = 0; i < content.length; i++) {
-    hash = (hash * 31 + content.charCodeAt(i)) & 0xFFFFFFFF;
-  }
-
-  return hash;
-}
 
 function fetchAndReplace() {
   const filePath = document.getElementById('filePath').value;
@@ -45,12 +36,10 @@ function fetchAndReplace() {
     .then(response => response.text())
     .then(fetchedContent => {
       const container = document.getElementById('content');
-      
-      const currentHash = calculateHash(container.textContent);
+      console.log(fetchedContent);
 
-      if (fetchedContent && calculateHash(fetchedContent) !== currentHash) {
-        container.textContent = fetchedContent;
-      }
+      container.innerHTML = fetchedContent;
+      console.log("trying to pass to element");
     })
     .catch(error => {
       console.error('Error fetching content:', error);
@@ -60,7 +49,7 @@ function fetchAndReplace() {
 // Fetch and replace content periodically
 setInterval(() => {
   fetchAndReplace();
-}, 1000); // 1000 milliseconds = 1 second
+}, 1000);
 </script>
 </head>
 <body>

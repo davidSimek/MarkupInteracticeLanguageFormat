@@ -20,7 +20,8 @@ hTranspile content = do
 
 processContent :: String -> String
 processContent [] = "<h1>It seems like your file is emp_ty</h1>"
-processContent content = concat $ map toTag $ keepDivs $ makeDivs (lines content) []
+processContent content = concat $ map toTag $ makeDivs (lines content) []
+-- concat $ map toTag $ keepDivs $ makeDivs (lines content) []
 
 
 
