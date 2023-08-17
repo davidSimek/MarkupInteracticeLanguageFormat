@@ -10,7 +10,11 @@ import UtilModule
 
 -- converts Div to HTML tag
 toTag :: Div -> String
-toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
+toTag div =
+    if isImage div
+        then "<img src=" ++ src div ++ " style = \"width: " ++ width div ++ "; height:" ++ height div ++ "; max-width: 100%; max-height: 100%;\">"
+
+        else "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
 -- iterates threw lines
 -- collects styles defined by user
@@ -18,10 +22,9 @@ toTag div = "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ s
 makeDivs :: [String] -> [Div] -> [Div]
 makeDivs [] _ = [defaultDiv { content = "end of document" }] 
 makeDivs (line:rest) styles
-    | getType line == "div" || getType line == "style" || getType line == "divQ" = (parse line styles: makeDivs rest (parse line styles : styles))
+    | getType line == "div" || getType line == "style" || getType line == "divQ" || getType line == "img" = (parse line styles: makeDivs rest (parse line styles : styles))
     | getType line == "comment" = makeDivs rest styles
     | otherwise = makeDivs rest styles
-
 
 -- processes line to and returns Div
 --                 defStyles
@@ -37,9 +40,10 @@ separateContent :: String -> [String]
 separateContent [] = ["comment", "", ""]
 separateContent line
     | getType line == "div"   = ["div"]   ++ splitOnN line (findSecDoub line 0 0)
-    | getType line == "style" = ["style"] ++ splitOnN line (findSecHash line 0 0) 
-    | getType line == "comment" = ["comment", "", ""]
     | getType line == "divQ" = ["div"] ++ splitOnNS line (findDolar line 0)
+    | getType line == "style" = ["style"] ++ splitOnN line (findSecHash line 0 0) 
+    | getType line == "img" = ["img"] ++ splitOnN line (findSecAt line 0 0)
+    | getType line == "comment" = ["comment", "", ""]
     | otherwise = ["comment", "", ""]
 
 -- splits string on index provided and removes first char
@@ -70,11 +74,12 @@ getType [] = "comment"
 getType ('\\':'$':rest) = getType rest
 getType ('\\':'#':rest) = getType rest
 getType ('\\':'"':rest) = getType rest
+getType ('\\':'@':rest) = getType rest
 getType (char:rest)
     | char == '"' = "div"
     | char == '#' = "style"
     | char == '$' = "divQ"
-    | char == ' ' = getType rest
+    | char == '@' = "img"
     | otherwise = getType rest
 
 
@@ -86,6 +91,15 @@ findSecDoub (char:rest) foundCount currentIndex
     | char == '"' && foundCount + 1 == 2 = currentIndex
     | char == '"' = findSecDoub rest (foundCount + 1) (currentIndex + 1)
     | otherwise = findSecDoub rest foundCount (currentIndex + 1)
+
+-- returns index of second "
+findSecAt :: String -> Int -> Int -> Int
+findSecAt [] _ currentIndex = currentIndex
+findSecAt ('\\':'@':rest) foundCount currentIndex = findSecAt rest foundCount (currentIndex + 2)
+findSecAt (char:rest) foundCount currentIndex
+    | char == '@' && foundCount + 1 == 2 = currentIndex
+    | char == '@' = findSecAt rest (foundCount + 1) (currentIndex + 1)
+    | otherwise = findSecAt rest foundCount (currentIndex + 1)
 
 -- returns index of second #
 findSecHash :: String -> Int -> Int -> Int
@@ -102,6 +116,7 @@ produceDiv (first:parsedContent:parsedStyle) styles
     | first == "div"   = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
     | first == "divQ"  = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
     | first == "style" = styleDiv parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) False
+    | first == "img"   = trace ("first: " ++ show first ++ "parsed Content: " ++ show parsedContent) styleImg parsedContent parsedStyle (findStyle styles (getStyle parsedStyle)) True
     | first == "comment" = defaultDiv { content = "comment" }
     | otherwise = defaultDiv { content = "comment without --" }
 
@@ -130,7 +145,21 @@ styleDiv parsedContent (style:_) baseStyle isDiv = baseStyle {
     font = if font baseStyle /= font defaultDiv then font baseStyle else getFont style,                
     fontSize = if fontSize baseStyle /= fontSize defaultDiv then fontSize baseStyle else getFontSize style
 }
-     
+
+styleImg :: String -> [String] -> Div ->    Bool -> Div
+styleImg _ [] _ _ = defaultDiv
+styleImg parsedContent (style:_) baseStyle isDiv = trace ("style: " ++ style) baseStyle {
+    isDefault = not isDiv,
+    isImage = True,
+    inSpace = if inSpace baseStyle /= inSpace defaultDiv then inSpace baseStyle else getInSpace style,
+    src = if src baseStyle /= src defaultDiv then src baseStyle else getSrc style,
+    width = if width baseStyle /= width defaultDiv then width baseStyle else getWidth style,
+    height = if height baseStyle /= height defaultDiv then height baseStyle else getHeight style,
+    inJump = if inJump baseStyle /= inJump defaultDiv then inJump baseStyle else getInJump style,
+    outSpace = if outSpace baseStyle /= outSpace defaultDiv  then outSpace baseStyle  else getOutSpace style,
+    outJump = if outJump baseStyle /= outJump defaultDiv  then outJump baseStyle  else getOutJump style
+}
+
 -- iterates threw styles library and tries to find matching one
 findStyle :: [Div] -> String -> Div
 findStyle [] styleString = defaultDiv { content = ("didn't find style" ++ styleString) }

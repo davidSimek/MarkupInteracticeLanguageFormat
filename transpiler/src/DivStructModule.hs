@@ -2,6 +2,10 @@ module DivStructModule (
     Div
     , defaultDiv
     , isDefault
+    , isImage
+    , src
+    , width
+    , height
     , content
     , font
     , fontSize
@@ -22,14 +26,18 @@ module DivStructModule (
     , getFont
     , getFontSize
     , getStyle
+    , getWidth
+    , getHeight
     , getOutSpace
     , getOutJump
     , getInSpace
     , getInJump
     , getColor
+    , getSrc
     ) 
 where
 import Text.Read (readMaybe)
+import Debug.Trace
 
 -- my modules
 import ColorsModule
@@ -37,6 +45,10 @@ import UtilModule
 -- represents div and all its attributes
 data Div = Div 
     { isDefault :: Bool
+    , isImage :: Bool
+    , src :: String
+    , width :: String
+    , height :: String
     , content :: String
     , font :: String
     , fontSize :: String
@@ -58,12 +70,16 @@ data Div = Div
 
     -- internal
     , style :: String
-    } deriving (Show)
+} deriving (Show)
 
 -- woks as base if no style is defined
 defaultDiv :: Div
 defaultDiv = Div 
     { isDefault = True
+    , isImage = False
+    , src = ""
+    , width = "100px"
+    , height = "100px"
     , content = "default"
     , font = "Arial, sans-serif"
     , fontSize = "15px"
@@ -120,6 +136,22 @@ getFontSize :: String -> String
 getFontSize input = case dropWhile (/= "fontSize") (words input) of
     ("fontSize" : fontSizeValue : _) -> fontSizeValue
     _ -> "15px"
+
+getWidth :: String -> String
+getWidth input = case dropWhile (/= "width") (words input) of
+    ("width" : widthValue : _) -> widthValue
+    _ -> "auto"
+
+getHeight :: String -> String
+getHeight input = case dropWhile (/= "height") (words input) of
+    ("height" : heightValue : _) -> heightValue
+    _ -> "auto"
+
+
+getSrc :: String -> String
+getSrc input = trace ("traced: \"" ++ input ++ "\"") (case dropWhile (/= "src") (words input) of
+    ("src" : srcValue : _) -> srcValue
+    _ -> "")
 
 getColor :: String -> Char -> String -> Int 
 getColor _ channel _
