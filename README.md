@@ -107,7 +107,7 @@ It is similar to markdown, but it has some key differences
 ##### differences from markdown:    
 - no xml markings
 - interactivity (in future)
-- per line evaluation (with some non-breaking exceptions)
+- per line evaluation
 
 -----
 
