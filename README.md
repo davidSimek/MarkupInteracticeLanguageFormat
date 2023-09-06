@@ -80,8 +80,9 @@ this is header again $ style header
 ``` 
 ##### result:
 ```
-<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
-
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(100, 100, 200, 1.0); margin: 10px 0px; padding: 15px 18px; font: 15px Arial, sans-serif;">this is header</div>
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">this is just normal text</div>
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(100, 100, 200, 1.0); margin: 10px 0px; padding: 15px 18px; font: 15px Arial, sans-serif;">this is header again</div>
 ```
 
 -----
