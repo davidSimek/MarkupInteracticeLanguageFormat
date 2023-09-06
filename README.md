@@ -64,7 +64,9 @@ Is there more stuff in vim? $ style subheading
 or
 hi, this is just basic text $
 ```
-you can choose from these 2 ways
+you can choose from these 2 ways 
+"text" syntax is more usefull for simple text
+text $ syntax is more usefull for styled text (I preffer this for all cases
 ##### result:
 ```
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
@@ -76,7 +78,21 @@ you can choose from these 2 ways
 ```
 this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px outSpace 30px
 ``` 
-##### result:
+<ins>color</ins> (font color)
+predefined colors -> white, blue and transparent
+rgba syntax       -> 100 230 100 1.0
+<ins>bg</ins> (background color)
+predefined colors -> white, blue and transparent
+rgba syntax       -> 100 230 100 1.0
+<ins>inJump</ins> (space between left and right side of box containing text and text itself) (padding-left and padding-right)
+<ins>outJump</ins> (space between left and right side of box containing text and border of window) (margin-left and margin-right)
+<ins>inSpace</ins> (space between top and bottom side of box containing text and text itself) (padding-top and padding-bottom)
+<ins>outSpace</ins> (space between top and bottom side of box containing text and other box containing text) (margin-top and margin-bottom)
+pixels     -> 100px
+percents   -> 40%
+view-width -> 8vw
+
+##### result: 
 ```
 <div style="background-color: rgba(0, 0, 0, 1.0); color: rgba(255, 255, 255, 1.0); margin: 0px 20px; padding: 30px 20px; font: 15px Arial, sans-serif;">this is white text on black background and some other stuff</div>
 ```
@@ -89,6 +105,8 @@ this is header $ style header
 this is just normal text $
 this is header again $ style header
 ``` 
+you can override style by adding parameters you want to change after "style <stylename>"
+
 ##### result:
 ```
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(100, 100, 200, 1.0); margin: 10px 0px; padding: 15px 18px; font: 15px Arial, sans-serif;">this is header</div>
@@ -101,7 +119,9 @@ this is header again $ style header
 ```
 @image of dog@ src https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg width 200px
 ```
+text between @'s is just for you, doesn't affect output in any way
 ##### result:
+
 ```
 <img src=https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg style = "width: 200px; height:auto; max-width: 100%; max-height: 100%;">```
 ```
@@ -112,9 +132,9 @@ this is header again $ style header
 ### is it just markdown copy???
 It is similar to markdown, but it has some key differences
 ##### differences from markdown:    
+- you can use whatever colors you want with rgba syntax, or predefined colors
 - no xml markings
 - interactivity (in future)
-- per line evaluation
 
 -----
 
