@@ -1,4 +1,4 @@
-module UtilModule (isNumber, escapeBackslash) where
+module UtilModule (isNumber, escapeBackslash, removeDoubleBackslash) where
 
 import Text.Read (readMaybe)
 
@@ -13,3 +13,7 @@ escapeBackslash :: Char -> String
 escapeBackslash '\\' = "\\\\"
 escapeBackslash c = [c]
 
+removeDoubleBackslash :: String -> String
+removeDoubleBackslash [] = []
+removeDoubleBackslash ('\\' : '\\' : rest) = removeDoubleBackslash rest
+removeDoubleBackslash notBackslash = notBackslash

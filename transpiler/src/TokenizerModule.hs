@@ -12,9 +12,9 @@ import UtilModule
 toTag :: Div -> String
 toTag div =
     if isImage div
-        then "<img src=" ++ src div ++ " style = \"width: " ++ width div ++ "; height:" ++ height div ++ "; max-width: 100%; max-height: 100%;\">"
+        then removeDoubleBackslash ("<img src=" ++ src div ++ " style = \"width: " ++ width div ++ "; height:" ++ height div ++ "; max-width: 100%; max-height: 100%;\">")
 
-        else "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
+        else removeDoubleBackslash ("<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n")
 
 -- iterates threw lines
 -- collects styles defined by user
