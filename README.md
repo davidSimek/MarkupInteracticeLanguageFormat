@@ -120,6 +120,9 @@ you can override style by adding parameters you want to change after "style <sty
 @image of dog@ src https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg width 200px
 ```
 text between @'s is just for you, doesn't affect output in any way
+src can point to image from web of locally to some image
+there are some checks for size so it shouldn't break
+if you specify only one paremeter of size, like height, second one is set so it keeps original ratio
 ##### result:
 
 ```
