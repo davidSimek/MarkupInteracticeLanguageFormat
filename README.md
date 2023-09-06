@@ -65,8 +65,8 @@ or
 hi, this is just basic text $
 ```
 you can choose from these 2 ways 
-"text" syntax is more usefull for simple text
-text $ syntax is more usefull for styled text (I preffer this for all cases
+"text" syntax is more usefull for simple text 
+text $ syntax is more usefull for styled text (I preffer this for all cases 
 ##### result:
 ```
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
