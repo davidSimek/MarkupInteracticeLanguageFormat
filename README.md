@@ -50,6 +50,13 @@ Is there more stuff in vim? $ style subheading
 
 -----
 
+### idea:
+- simple markup language usable by non developers
+- free transpiler, live preview in browser
+- easy to use UI
+
+-----
+
 ## what can it do?
 ### simple text:
 ```
@@ -65,7 +72,7 @@ you can choose from these 2 ways
 ```
 ### some styling:
 ```
-this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px inJump30px
+this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px outSpace 30px
 ``` 
 ##### result:
 ```
@@ -84,13 +91,14 @@ this is header again $ style header
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">this is just normal text</div>
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(100, 100, 200, 1.0); margin: 10px 0px; padding: 15px 18px; font: 15px Arial, sans-serif;">this is header again</div>
 ```
-
------
-
-### idea:
-- simple markup language usable by non developers
-- free transpiler, live preview in browser
-- easy to use UI
+### use image
+```
+@image of dog@ src https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg width 200px
+```
+##### result:
+```
+<img src=https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg style = "width: 200px; height:auto; max-width: 100%; max-height: 100%;">```
+```
 
 -----
 
