@@ -12,9 +12,9 @@ import UtilModule
 toTag :: Div -> String
 toTag div =
     if isImage div
-        then removeDoubleBackslash ("<img src=" ++ src div ++ " style = \"width: " ++ width div ++ "; height:" ++ height div ++ "; max-width: 100%; max-height: 100%;\">")
+        then "<img src=" ++ src div ++ " style = \"width: " ++ width div ++ "; height:" ++ height div ++ "; max-width: 100%; max-height: 100%;\">"
 
-        else removeDoubleBackslash ("<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n")
+        else "<div style=\"background-color: rgba(" ++ show (br div) ++ ", " ++ show (bg div) ++ ", " ++ show (bb div) ++ ", " ++ show (ba div) ++ "); color: rgba(" ++ show (fr div) ++ ", " ++ show (fg div) ++ ", " ++ show (fb div) ++ ", " ++ show (fa div) ++ "); margin: " ++ outSpace div ++ " " ++ outJump div ++ "; padding: " ++ inSpace div ++ " " ++ inJump div ++ "; font: " ++ fontSize div ++ " " ++ font div ++ ";\">" ++ content div ++ "</div>\n"
 
 -- iterates threw lines
 -- collects styles defined by user
@@ -30,7 +30,7 @@ makeDivs (line:rest) styles
 --                 defStyles
 parse :: String -> [Div] ->    Div
 parse [] _ = defaultDiv { content = "problem in parse function" }
-parse line styles =  produceDiv (separateContent (concatMap escapeBackslash line)) styles
+parse line styles =  produceDiv (separateContent line) styles
 
 -- splits line into array of 3
 -- 1. type of element
