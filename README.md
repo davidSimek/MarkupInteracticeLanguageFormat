@@ -54,31 +54,31 @@ Is there more stuff in vim? $ style subheading
 #### simple text:
 ```
 "hi, this is just basic text"
-``` 
 or
-```
 hi, this is just basic text $
 ```
 you can choose from these 2 ways
-##### result
+##### result:
 ```
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
 
 ```
 #### some styling:
 ```
-"hi, this is just basic text"
+this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px inJump30px
 ``` 
-##### result
+##### result:
 ```
-<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
-
+<div style="background-color: rgba(0, 0, 0, 1.0); color: rgba(255, 255, 255, 1.0); margin: 0px 20px; padding: 30px 20px; font: 15px Arial, sans-serif;">this is white text on black background and some other stuff</div>
 ```
-#### simple text:
+#### defining styles::
 ```
-"hi, this is just basic text"
+#header# color 100 100 200 1.0 inSpace 15px outSpace 10px inJump 18px
+this is header $ style header
+this is just normal text $
+this is header again $ style header
 ``` 
-##### result
+##### result:
 ```
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
 
