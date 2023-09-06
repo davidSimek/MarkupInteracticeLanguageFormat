@@ -50,8 +50,8 @@ Is there more stuff in vim? $ style subheading
 
 -----
 
-### what can it do?
-#### simple text:
+## what can it do?
+### simple text:
 ```
 "hi, this is just basic text"
 or
@@ -63,7 +63,7 @@ you can choose from these 2 ways
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
 
 ```
-#### some styling:
+### some styling:
 ```
 this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px inJump30px
 ``` 
@@ -71,7 +71,7 @@ this is white text on black background and some other stuff $ color white bg bla
 ```
 <div style="background-color: rgba(0, 0, 0, 1.0); color: rgba(255, 255, 255, 1.0); margin: 0px 20px; padding: 30px 20px; font: 15px Arial, sans-serif;">this is white text on black background and some other stuff</div>
 ```
-#### defining styles::
+### defining styles:
 ```
 #header# color 100 100 200 1.0 inSpace 15px outSpace 10px inJump 18px
 this is header $ style header
