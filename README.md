@@ -1,5 +1,3 @@
-(I need to update this! it is extremely outdated)
-
 # Markup Interactive Language Format
 #####  maturita project and personal project
 ##### by David Šimek and Petr Hruška
@@ -50,29 +48,56 @@ Is there more stuff in vim? $ style subheading
 ##### result:
 ![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/4ad02113-0e82-446f-a379-dd00c54e7960)
 
-
 -----
 
-### currently working on:
-transpiler to html  
-UI tracking changes and displaying preview
+### what can it do?
+#### simple text:
+```
+"hi, this is just basic text"
+``` 
+or
+```
+hi, this is just basic text $
+```
+you can choose from these 2 ways
+##### result
+```
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
+
+```
+#### some styling:
+```
+"hi, this is just basic text"
+``` 
+##### result
+```
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
+
+```
+#### simple text:
+```
+"hi, this is just basic text"
+``` 
+##### result
+```
+<div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
+
+```
 
 -----
 
 ### idea:
 - simple markup language usable by non developers
-- free transpiler and other tools
-- easy to use UI (in future)
+- free transpiler, live preview in browser
+- easy to use UI
 
 -----
 
 ### is it just markdown copy???
-It really seems similar to markdown, I see than and one can argue it has nothing new compared to markdown. That might be valid point, but it has different syntax approach, target group, and will be more interactive.
-
-
+It is similar to markdown, but it has some key differences
 ##### differences from markdown:    
 - no xml markings
-- interactivity
+- interactivity (in future)
 - per line evaluation (with some non-breaking exceptions)
 
 -----
@@ -91,6 +116,6 @@ This project has 2 main goals.
 ### technology used:
 - haskell
 - html  
-### probably will be used in future:
-- cpp
-- Qt for cpp (for easy UI, file tracking and HTML displaying capabilities)
+- cpp (http server)
+- js
+- bash 
