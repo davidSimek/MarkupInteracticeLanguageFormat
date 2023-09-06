@@ -70,6 +70,8 @@ you can choose from these 2 ways
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">hi, this is just text</div>
 
 ```
+![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/a079c4e4-3e70-4e08-899b-d97e3bcd6371)
+
 ### some styling:
 ```
 this is white text on black background and some other stuff $ color white bg black inJump 20px outJump 20px inSpace 30px outSpace 30px
@@ -78,6 +80,8 @@ this is white text on black background and some other stuff $ color white bg bla
 ```
 <div style="background-color: rgba(0, 0, 0, 1.0); color: rgba(255, 255, 255, 1.0); margin: 0px 20px; padding: 30px 20px; font: 15px Arial, sans-serif;">this is white text on black background and some other stuff</div>
 ```
+![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/05d5ddce-873f-485d-a195-0752ef53b03e)
+
 ### defining styles:
 ```
 #header# color 100 100 200 1.0 inSpace 15px outSpace 10px inJump 18px
@@ -91,6 +95,8 @@ this is header again $ style header
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(0, 0, 0, 1.0); margin: 0px 0px; padding: 0px 10px; font: 15px Arial, sans-serif;">this is just normal text</div>
 <div style="background-color: rgba(0, 0, 0, 0.0); color: rgba(100, 100, 200, 1.0); margin: 10px 0px; padding: 15px 18px; font: 15px Arial, sans-serif;">this is header again</div>
 ```
+![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/b44aa16b-e1be-418e-bfc0-c43cebde298b)
+
 ### use image
 ```
 @image of dog@ src https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg width 200px
@@ -99,6 +105,7 @@ this is header again $ style header
 ```
 <img src=https://cdn.pixabay.com/photo/2019/08/19/07/45/corgi-4415649_1280.jpg style = "width: 200px; height:auto; max-width: 100%; max-height: 100%;">```
 ```
+![obrazek](https://github.com/davidSimek/MarkupInteracticeLanguageFormat/assets/119676792/e25f5756-9935-49cc-a72c-9af5b972da4f)
 
 -----
 
