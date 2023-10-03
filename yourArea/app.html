@@ -31,7 +31,7 @@
     }
 </style>
 <script>
-
+var lastFetched = "";
 function fetchAndReplace() {
   const filePath = document.getElementById('filePath').value;
   document.getElementById('requesting').innerHTML = filePath;
@@ -39,10 +39,12 @@ function fetchAndReplace() {
     .then(response => response.text())
     .then(fetchedContent => {
       const container = document.getElementById('content');
-      console.log(fetchedContent);
-
+      if (lastFetched === fetchedContent) {
+        return;
+      }
       container.innerHTML = fetchedContent;
       console.log("trying to pass to element");
+      lastFetched = fetchedContent;
     })
     .catch(error => {
       console.error('Error fetching content:', error);
